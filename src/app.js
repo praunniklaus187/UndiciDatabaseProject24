@@ -132,7 +132,6 @@ app.get('/order', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'order.html'));
 });
 
-
 app.post('/order', (req, res) => {
     const { customer_id, branch_id, products } = req.body;
 
@@ -146,9 +145,9 @@ app.post('/order', (req, res) => {
 
         // Insert new order
         const orderQuery = `
-      INSERT INTO \`ORDER\` (STATUS, CUSTOMER_ID, BRANCH_ID, ORDER_DATE)
-      VALUES ('In Progress', ?, ?, NOW())
-    `;
+            INSERT INTO \`ORDER\` (STATUS, CUSTOMER_ID, BRANCH_ID, ORDER_DATE)
+            VALUES ('In Progress', ?, ?, NOW())
+        `;
         db.query(orderQuery, [customer_id, branch_id], (err, orderResult) => {
             if (err) {
                 return db.rollback(() => {
@@ -159,13 +158,12 @@ app.post('/order', (req, res) => {
 
             const order_id = orderResult.insertId;
 
-            // Prepare inserts for ORDER_ITEM and ORDER_ITEM_PRICE
+            // Prepare inserts for ORDER_ITEM
             const orderItems = products.map((p) => [order_id, p.product_id, p.quantity]);
             const orderItemQuery = `
-        INSERT INTO ORDER_ITEM (ORDER_ID, PRODUCT_ID, QUANTITY)
-        VALUES ?
-      `;
-
+                INSERT INTO ORDER_ITEM (ORDER_ID, PRODUCT_ID, QUANTITY)
+                VALUES ?
+            `;
             db.query(orderItemQuery, [orderItems], (err) => {
                 if (err) {
                     return db.rollback(() => {
@@ -174,13 +172,12 @@ app.post('/order', (req, res) => {
                     });
                 }
 
-                // If you have a pricing table or logic, insert into ORDER_ITEM_PRICE
-                // For this example, let's assume the price is fetched from the PRODUCT table.
+                // Fetch product prices for ORDER_ITEM_PRICE
                 const productIds = products.map(p => p.product_id);
                 const placeholders = productIds.map(() => '?').join(',');
                 const productPriceQuery = `
-          SELECT PRODUCT_ID, PRICE FROM PRODUCT WHERE PRODUCT_ID IN (${placeholders})
-        `;
+                    SELECT PRODUCT_ID, PRICE FROM PRODUCT WHERE PRODUCT_ID IN (${placeholders})
+                `;
                 db.query(productPriceQuery, productIds, (err, priceResults) => {
                     if (err) {
                         return db.rollback(() => {
@@ -189,7 +186,7 @@ app.post('/order', (req, res) => {
                         });
                     }
 
-                    // Map product_id to price for quick lookup
+                    // Map product_id to price
                     const priceMap = {};
                     priceResults.forEach((row) => {
                         priceMap[row.PRODUCT_ID] = row.PRICE;
@@ -197,9 +194,9 @@ app.post('/order', (req, res) => {
 
                     const orderItemPrices = products.map(p => [order_id, p.product_id, priceMap[p.product_id]]);
                     const orderItemPriceQuery = `
-            INSERT INTO ORDER_ITEM_PRICE (ORDER_ID, PRODUCT_ID, PRICE)
-            VALUES ?
-          `;
+                        INSERT INTO ORDER_ITEM_PRICE (ORDER_ID, PRODUCT_ID, PRICE)
+                        VALUES ?
+                    `;
                     db.query(orderItemPriceQuery, [orderItemPrices], (err) => {
                         if (err) {
                             return db.rollback(() => {
@@ -225,7 +222,6 @@ app.post('/order', (req, res) => {
     });
 });
 
-
 // Get the list of products (pizzas)
 app.get('/products', (req, res) => {
     const query = 'SELECT PRODUCT_ID, NAME, DESCRIPTION, PRICE FROM PRODUCT';
@@ -247,8 +243,6 @@ app.get('/interface', (req, res) => {
 // Fetch data from any table dynamically (for admin purposes)
 app.get('/table/:tableName', (req, res) => {
     const tableName = req.params.tableName;
-
-    // Escape the table name to prevent SQL injection
     const query = `SELECT * FROM ${mysql.escapeId(tableName)}`;
     db.query(query, (err, results) => {
         if (err) {
@@ -259,7 +253,6 @@ app.get('/table/:tableName', (req, res) => {
         }
     });
 });
-
 
 // Serve the employee login page
 app.get('/employee', (req, res) => {
@@ -293,7 +286,7 @@ app.post('/employee/login', (req, res) => {
             return res.status(401).send('Invalid Employee ID or Password.');
         }
 
-        // At this point, login is successful. Check role.
+        // Check role and redirect accordingly
         if (employee.ROLE === 'admin') {
             return res.redirect('/employee/admin');
         } else {
@@ -307,10 +300,232 @@ app.get('/employee/admin', (req, res) => {
     res.send('<h1>Admin Dashboard</h1><p>Welcome Admin!</p>');
 });
 
-// Employee dashboard page (replace with a proper HTML or template)
+// Employee dashboard page: Show unfinished orders and allow completing them
 app.get('/employee/home', (req, res) => {
-    res.send('<h1>Employee Dashboard</h1><p>Welcome Employee!</p>');
+    // Fetch all orders that are not completed
+    const query = `
+      SELECT O.ORDER_ID, O.STATUS, O.ORDER_DATE, C.NAME AS CUSTOMER_NAME, B.BRANCH_ID
+      FROM \`ORDER\` O
+      JOIN CUSTOMER C ON O.CUSTOMER_ID = C.CUSTOMER_ID
+      JOIN BRANCH B ON O.BRANCH_ID = B.BRANCH_ID
+      WHERE O.STATUS != 'Completed'
+      ORDER BY O.ORDER_DATE DESC
+    `;
+    db.query(query, (err, orders) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Database query failed.');
+        }
+
+        let html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8"/>
+          <title>Employee Dashboard</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 2em; }
+            table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }
+            th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
+            th { background: #f0f0f0; }
+            form { display: inline-block; }
+          </style>
+        </head>
+        <body>
+          <h1>Employee Dashboard</h1>
+          <h2>Unfinished Orders</h2>
+        `;
+
+        if (orders.length === 0) {
+            html += `<p>No unfinished orders at the moment.</p>`;
+        } else {
+            html += `
+            <table>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Branch ID</th>
+                <th>Status</th>
+                <th>Order Date</th>
+                <th>Actions</th>
+              </tr>
+            `;
+
+            for (const order of orders) {
+                html += `
+                <tr>
+                  <td>${order.ORDER_ID}</td>
+                  <td>${order.CUSTOMER_NAME}</td>
+                  <td>${order.BRANCH_ID}</td>
+                  <td>${order.STATUS}</td>
+                  <td>${order.ORDER_DATE}</td>
+                  <td>
+                    <form action="/employee/handle-order" method="POST">
+                      <input type="hidden" name="order_id" value="${order.ORDER_ID}" />
+                      <button type="submit">Complete Order</button>
+                    </form>
+                  </td>
+                </tr>
+                `;
+            }
+
+            html += `</table>`;
+        }
+
+        html += `
+        </body>
+        </html>
+        `;
+
+        res.send(html);
+    });
 });
+
+// Handle completing an order and updating storage
+app.post('/employee/handle-order', (req, res) => {
+    const { order_id } = req.body;
+
+    if (!order_id) {
+        return res.status(400).send('Order ID is required.');
+    }
+
+    db.beginTransaction((err) => {
+        if (err) return res.status(500).send('Error starting transaction.');
+
+        // 1. Update order status to "Completed"
+        const updateOrderStatusQuery = `
+          UPDATE \`ORDER\`
+          SET STATUS = 'Completed'
+          WHERE ORDER_ID = ?
+        `;
+        db.query(updateOrderStatusQuery, [order_id], (err, result) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error(err);
+                    res.status(500).send('Error updating order status.');
+                });
+            }
+
+            // 2. Get all products for the order
+            const orderItemsQuery = `
+              SELECT PRODUCT_ID, QUANTITY
+              FROM ORDER_ITEM
+              WHERE ORDER_ID = ?
+            `;
+            db.query(orderItemsQuery, [order_id], (err, orderItems) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error(err);
+                        res.status(500).send('Error fetching order items.');
+                    });
+                }
+
+                if (orderItems.length === 0) {
+                    // No items in this order, just commit
+                    db.commit((err) => {
+                        if (err) {
+                            return db.rollback(() => {
+                                console.error(err);
+                                res.status(500).send('Error committing transaction.');
+                            });
+                        }
+                        return res.redirect('/employee/home');
+                    });
+                    return;
+                }
+
+                // 3. For each product, find ingredients required
+                const productIds = orderItems.map(i => i.PRODUCT_ID);
+                const placeholders = productIds.map(() => '?').join(',');
+                const productIngredientsQuery = `
+                  SELECT PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED
+                  FROM PRODUCT_INGREDIENT
+                  WHERE PRODUCT_ID IN (${placeholders})
+                `;
+                db.query(productIngredientsQuery, productIds, (err, productIngredients) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            console.error(err);
+                            res.status(500).send('Error fetching product ingredients.');
+                        });
+                    }
+
+                    // Compute total required ingredients
+                    const ingredientRequirements = {};
+
+                    orderItems.forEach(item => {
+                        const productId = item.PRODUCT_ID;
+                        const quantityOrdered = item.QUANTITY;
+
+                        productIngredients
+                            .filter(pi => pi.PRODUCT_ID === productId)
+                            .forEach(pi => {
+                                const totalNeeded = pi.QUANTITY_REQUIRED * quantityOrdered;
+                                if (!ingredientRequirements[pi.INGREDIENT_ID]) {
+                                    ingredientRequirements[pi.INGREDIENT_ID] = 0;
+                                }
+                                ingredientRequirements[pi.INGREDIENT_ID] += totalNeeded;
+                            });
+                    });
+
+                    // 4. Deduct from STORAGE. First get BRANCH_ID for the order
+                    const branchQuery = `
+                      SELECT BRANCH_ID FROM \`ORDER\` WHERE ORDER_ID = ?
+                    `;
+                    db.query(branchQuery, [order_id], (err, branchResult) => {
+                        if (err || branchResult.length === 0) {
+                            return db.rollback(() => {
+                                console.error(err);
+                                res.status(500).send('Error fetching branch for order.');
+                            });
+                        }
+
+                        const branchId = branchResult[0].BRANCH_ID;
+                        const ingredientIds = Object.keys(ingredientRequirements);
+
+                        const updateNextIngredient = (index) => {
+                            if (index >= ingredientIds.length) {
+                                // All ingredients updated, commit transaction
+                                db.commit((err) => {
+                                    if (err) {
+                                        return db.rollback(() => {
+                                            console.error(err);
+                                            res.status(500).send('Error committing transaction.');
+                                        });
+                                    }
+                                    return res.redirect('/employee/home');
+                                });
+                                return;
+                            }
+
+                            const ingId = ingredientIds[index];
+                            const requiredQty = ingredientRequirements[ingId];
+
+                            const updateStorageQuery = `
+                              UPDATE STORAGE
+                              SET QUANTITY = QUANTITY - ?
+                              WHERE BRANCH_ID = ? AND INGREDIENT_ID = ?
+                            `;
+                            db.query(updateStorageQuery, [requiredQty, branchId, ingId], (err) => {
+                                if (err) {
+                                    return db.rollback(() => {
+                                        console.error(err);
+                                        res.status(500).send('Error updating storage.');
+                                    });
+                                }
+                                updateNextIngredient(index + 1);
+                            });
+                        };
+
+                        updateNextIngredient(0);
+                    });
+                });
+            });
+        });
+    });
+});
+
+
 
 
 // Root route
