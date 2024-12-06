@@ -1,67 +1,102 @@
-DROP DATABASE my_database;
-
--- Step 1: Create the database
-
-
+DROP DATABASE IF EXISTS my_database;
 CREATE DATABASE my_database;
-
--- Step 2: Switch to the database
 USE my_database;
 
--- Step 3: Create the tables in the correct order
+-- POSTAL_CODE table (no change)
 CREATE TABLE POSTAL_CODE (
                              POSTAL_CODE VARCHAR(10) PRIMARY KEY,
                              CITY VARCHAR(100),
                              COUNTRY VARCHAR(100)
 );
 
+-- ADDRESS table with AUTO_INCREMENT
 CREATE TABLE ADDRESS (
-                         ADDRESS_ID INTEGER PRIMARY KEY,
+                         ADDRESS_ID INT PRIMARY KEY AUTO_INCREMENT,
                          STREET_NAME VARCHAR(100),
                          HOUSE_NUMBER VARCHAR(10),
                          POSTAL_CODE VARCHAR(10),
                          FOREIGN KEY (POSTAL_CODE) REFERENCES POSTAL_CODE(POSTAL_CODE)
 );
 
+-- BRANCH table with AUTO_INCREMENT
 CREATE TABLE BRANCH (
-                        BRANCH_ID INTEGER PRIMARY KEY,
-                        ADDRESS_ID INTEGER,
+                        BRANCH_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        ADDRESS_ID INT,
                         FOREIGN KEY (ADDRESS_ID) REFERENCES ADDRESS(ADDRESS_ID)
 );
 
+-- CUSTOMER table (No AUTO_INCREMENT here; we will use trigger to generate ID)
 CREATE TABLE CUSTOMER (
                           CUSTOMER_ID VARCHAR(50) PRIMARY KEY,
                           NAME VARCHAR(255),
-                          ADDRESS_ID INTEGER,
+                          ADDRESS_ID INT,
                           FOREIGN KEY (ADDRESS_ID) REFERENCES ADDRESS(ADDRESS_ID)
 );
 
+-- Trigger to auto-generate CUSTOMER_ID
+DELIMITER //
+CREATE TRIGGER trg_customer_id
+    BEFORE INSERT ON CUSTOMER
+    FOR EACH ROW
+BEGIN
+    IF NEW.CUSTOMER_ID IS NULL OR NEW.CUSTOMER_ID = '' THEN
+        -- Extract numeric part after 'CUST' and find max
+        SELECT COALESCE(MAX(CAST(SUBSTR(CUSTOMER_ID,5) AS UNSIGNED)),0) + 1
+        INTO @next_cust_id
+        FROM CUSTOMER
+        WHERE CUSTOMER_ID LIKE 'CUST%';
+
+        SET NEW.CUSTOMER_ID = CONCAT('CUST', LPAD(@next_cust_id, 3, '0'));
+    END IF;
+END//
+DELIMITER ;
+
+-- EMPLOYEE table (No AUTO_INCREMENT; we will use trigger for ID)
 CREATE TABLE EMPLOYEE (
                           EMPLOYEE_ID VARCHAR(50) PRIMARY KEY,
                           NAME VARCHAR(255),
-                          BRANCH_ID INTEGER,
+                          BRANCH_ID INT,
                           SALARY DECIMAL(10,2),
-                          ADDRESS_ID INTEGER,
+                          ADDRESS_ID INT,
                           FOREIGN KEY (BRANCH_ID) REFERENCES BRANCH(BRANCH_ID),
                           FOREIGN KEY (ADDRESS_ID) REFERENCES ADDRESS(ADDRESS_ID)
 );
 
+-- Trigger to auto-generate EMPLOYEE_ID
+DELIMITER //
+CREATE TRIGGER trg_employee_id
+    BEFORE INSERT ON EMPLOYEE
+    FOR EACH ROW
+BEGIN
+    IF NEW.EMPLOYEE_ID IS NULL OR NEW.EMPLOYEE_ID = '' THEN
+        SELECT COALESCE(MAX(CAST(SUBSTR(EMPLOYEE_ID,4) AS UNSIGNED)),0) + 1
+        INTO @next_emp_id
+        FROM EMPLOYEE
+        WHERE EMPLOYEE_ID LIKE 'EMP%';
+
+        SET NEW.EMPLOYEE_ID = CONCAT('EMP', LPAD(@next_emp_id, 3, '0'));
+    END IF;
+END//
+DELIMITER ;
+
+-- PRODUCT table with AUTO_INCREMENT
 CREATE TABLE PRODUCT (
-                         PRODUCT_ID INTEGER PRIMARY KEY,
+                         PRODUCT_ID INT PRIMARY KEY AUTO_INCREMENT,
                          NAME VARCHAR(100),
                          DESCRIPTION TEXT,
                          PRICE DECIMAL(10,2)
 );
 
+-- INGREDIENT table with AUTO_INCREMENT
 CREATE TABLE INGREDIENT (
-                            INGREDIENT_ID INTEGER PRIMARY KEY,
+                            INGREDIENT_ID INT PRIMARY KEY AUTO_INCREMENT,
                             NAME VARCHAR(100),
                             COST DECIMAL(10,2)
 );
 
 CREATE TABLE PRODUCT_INGREDIENT (
-                                    PRODUCT_ID INTEGER,
-                                    INGREDIENT_ID INTEGER,
+                                    PRODUCT_ID INT,
+                                    INGREDIENT_ID INT,
                                     QUANTITY_REQUIRED DECIMAL(10,2),
                                     PRIMARY KEY (PRODUCT_ID, INGREDIENT_ID),
                                     FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID),
@@ -69,38 +104,100 @@ CREATE TABLE PRODUCT_INGREDIENT (
 );
 
 CREATE TABLE STORAGE (
-                         BRANCH_ID INTEGER,
-                         INGREDIENT_ID INTEGER,
+                         BRANCH_ID INT,
+                         INGREDIENT_ID INT,
                          QUANTITY DECIMAL(10,2),
                          PRIMARY KEY (BRANCH_ID, INGREDIENT_ID),
                          FOREIGN KEY (BRANCH_ID) REFERENCES BRANCH(BRANCH_ID),
                          FOREIGN KEY (INGREDIENT_ID) REFERENCES INGREDIENT(INGREDIENT_ID)
 );
 
+-- `ORDER` table with AUTO_INCREMENT
 CREATE TABLE `ORDER` (
-                         ORDER_ID INTEGER PRIMARY KEY,
+                         ORDER_ID INT PRIMARY KEY AUTO_INCREMENT,
                          STATUS VARCHAR(50),
                          CUSTOMER_ID VARCHAR(50),
-                         BRANCH_ID INTEGER,
+                         BRANCH_ID INT,
                          ORDER_DATE TIMESTAMP,
                          FOREIGN KEY (CUSTOMER_ID) REFERENCES CUSTOMER(CUSTOMER_ID),
                          FOREIGN KEY (BRANCH_ID) REFERENCES BRANCH(BRANCH_ID)
 );
 
 CREATE TABLE ORDER_ITEM (
-                            ORDER_ID INTEGER,
-                            PRODUCT_ID INTEGER,
-                            QUANTITY INTEGER,
+                            ORDER_ID INT,
+                            PRODUCT_ID INT,
+                            QUANTITY INT,
                             PRIMARY KEY (ORDER_ID, PRODUCT_ID),
                             FOREIGN KEY (ORDER_ID) REFERENCES `ORDER`(ORDER_ID),
                             FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID)
 );
 
 CREATE TABLE ORDER_ITEM_PRICE (
-                                  ORDER_ID INTEGER,
-                                  PRODUCT_ID INTEGER,
+                                  ORDER_ID INT,
+                                  PRODUCT_ID INT,
                                   PRICE DECIMAL(10,2),
                                   PRIMARY KEY (ORDER_ID, PRODUCT_ID),
                                   FOREIGN KEY (ORDER_ID) REFERENCES `ORDER`(ORDER_ID),
                                   FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID)
 );
+
+-- Insert sample data
+
+INSERT INTO POSTAL_CODE (POSTAL_CODE, CITY, COUNTRY) VALUES
+                                                         ('10001', 'New York', 'USA'),
+                                                         ('SW1A 1AA', 'London', 'UK');
+
+INSERT INTO ADDRESS (STREET_NAME, HOUSE_NUMBER, POSTAL_CODE) VALUES
+                                                                 ('Broadway', '123', '10001'),
+                                                                 ('Downing Street', '10', 'SW1A 1AA');
+
+INSERT INTO BRANCH (ADDRESS_ID) VALUES
+                                    (1),
+                                    (2);
+
+-- Insert customers without specifying CUSTOMER_ID, trigger will handle it
+INSERT INTO CUSTOMER (NAME, ADDRESS_ID) VALUES
+                                            ('John Doe', 1),
+                                            ('Jane Smith', 2);
+
+-- Insert employees without specifying EMPLOYEE_ID, trigger will handle it
+INSERT INTO EMPLOYEE (NAME, BRANCH_ID, SALARY, ADDRESS_ID) VALUES
+                                                               ('Alice Johnson', 1, 50000.00, 1),
+                                                               ('Bob Williams', 2, 55000.00, 2);
+
+INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE) VALUES
+                                                   ('Cheese Pizza', 'Classic cheese pizza', 10.99),
+                                                   ('Pepperoni Pizza', 'Pizza with pepperoni topping', 12.99);
+
+INSERT INTO INGREDIENT (NAME, COST) VALUES
+                                        ('Cheese', 2.50),
+                                        ('Pepperoni', 3.00);
+
+INSERT INTO PRODUCT_INGREDIENT (PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED) VALUES
+                                                                                  (1, 1, 0.3),
+                                                                                  (2, 1, 0.3),
+                                                                                  (2, 2, 0.2);
+
+INSERT INTO STORAGE (BRANCH_ID, INGREDIENT_ID, QUANTITY) VALUES
+                                                             (1, 1, 100.0),
+                                                             (1, 2, 50.0);
+
+INSERT INTO `ORDER` (STATUS, CUSTOMER_ID, BRANCH_ID, ORDER_DATE) VALUES
+                                                                     ('Completed', 'CUST001', 1, '2024-12-02 12:30:00'),
+                                                                     ('In Progress', 'CUST002', 2, '2024-12-02 13:00:00');
+
+INSERT INTO ORDER_ITEM (ORDER_ID, PRODUCT_ID, QUANTITY) VALUES
+                                                            (1, 1, 2),
+                                                            (2, 2, 1);
+
+INSERT INTO ORDER_ITEM_PRICE (ORDER_ID, PRODUCT_ID, PRICE) VALUES
+                                                               (1, 1, 10.99),
+                                                               (2, 2, 12.99);
+
+ALTER TABLE EMPLOYEE
+    ADD PASSWORD VARCHAR(255),
+    ADD ROLE VARCHAR(50);
+
+
+UPDATE EMPLOYEE SET PASSWORD='secret123', ROLE='admin' WHERE EMPLOYEE_ID='EMP001';
+UPDATE EMPLOYEE SET PASSWORD='pass456', ROLE='employee' WHERE EMPLOYEE_ID='EMP002';
