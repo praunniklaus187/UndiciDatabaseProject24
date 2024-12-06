@@ -32,7 +32,7 @@ db.connect((err) => {
     console.log('Connected to the database!');
 });
 
-// Generate the next CUSTOMER_ID
+// Generate the next CUSTOMER_ID (handled by trigger for employee, but we keep this for customers)
 const getNextCustomerId = (callback) => {
     const query = 'SELECT MAX(CAST(SUBSTRING(CUSTOMER_ID, 5) AS UNSIGNED)) AS max_id FROM CUSTOMER';
     db.query(query, (err, results) => {
@@ -295,11 +295,6 @@ app.post('/employee/login', (req, res) => {
     });
 });
 
-// Admin dashboard page (replace with a proper HTML or template)
-app.get('/employee/admin', (req, res) => {
-    res.send('<h1>Admin Dashboard</h1><p>Welcome Admin!</p>');
-});
-
 // Employee dashboard page: Show unfinished orders and allow completing them
 app.get('/employee/home', (req, res) => {
     // Fetch all orders that are not completed
@@ -525,8 +520,151 @@ app.post('/employee/handle-order', (req, res) => {
     });
 });
 
+// Serve the admin dashboard
+app.get('/employee/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'admin.html'));
+});
 
+// Middleware to verify admin
+const verifyAdmin = (req, res, next) => {
+    const { employee_id } = req.body; // Adjust if using sessions or tokens
 
+    const query = 'SELECT ROLE FROM EMPLOYEE WHERE EMPLOYEE_ID = ?';
+    db.query(query, [employee_id], (err, results) => {
+        if (err || results.length === 0 || results[0].ROLE !== 'admin') {
+            return res.status(403).send('Access denied. Admins only.');
+        }
+        next();
+    });
+};
+
+// Add employee route (Admin only)
+app.post('/api/admin/add-employee', (req, res) => {
+    const { name, branch_id, salary, street_name, house_number, postal_code, city, country, password, role } = req.body;
+
+    if (!name || !branch_id || !salary || !street_name || !house_number || !postal_code || !city || !country || !password || !role) {
+        return res.status(400).send('All fields are required to add an employee.');
+    }
+
+    db.beginTransaction((err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Could not start transaction.');
+        }
+
+        const postalCodeQuery = `
+            INSERT IGNORE INTO POSTAL_CODE (POSTAL_CODE, CITY, COUNTRY)
+            VALUES (?, ?, ?)
+        `;
+        db.query(postalCodeQuery, [postal_code, city, country], (err) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error(err);
+                    res.status(500).send('Error inserting postal code.');
+                });
+            }
+
+            const addressQuery = `
+                INSERT INTO ADDRESS (STREET_NAME, HOUSE_NUMBER, POSTAL_CODE)
+                VALUES (?, ?, ?)
+            `;
+            db.query(addressQuery, [street_name, house_number, postal_code], (err, results) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error(err);
+                        res.status(500).send('Error inserting address.');
+                    });
+                }
+
+                const address_id = results.insertId;
+
+                const employeeQuery = `
+                    INSERT INTO EMPLOYEE (NAME, BRANCH_ID, SALARY, ADDRESS_ID, PASSWORD, ROLE)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                db.query(employeeQuery, [name, branch_id, salary, address_id, password, role], (err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            console.error(err);
+                            res.status(500).send('Error inserting employee.');
+                        });
+                    }
+
+                    db.commit((err) => {
+                        if (err) {
+                            return db.rollback(() => {
+                                console.error(err);
+                                res.status(500).send('Transaction commit failed.');
+                            });
+                        }
+                        res.send('Employee added successfully.');
+                    });
+                });
+            });
+        });
+    });
+});
+
+app.post('/api/admin/add-branch', verifyAdmin, (req, res) => {
+    const { address_id } = req.body;
+
+    if (!address_id) {
+        return res.status(400).send('Address ID is required to add a branch.');
+    }
+
+    const query = `
+        INSERT INTO BRANCH (ADDRESS_ID)
+        VALUES (?)
+    `;
+    db.query(query, [address_id], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error adding branch.');
+        }
+        res.send('Branch added successfully.');
+    });
+});
+
+app.post('/api/admin/add-menu-item', verifyAdmin, (req, res) => {
+    const { name, description, price } = req.body;
+
+    if (!name || !description || !price) {
+        return res.status(400).send('All fields are required to add a menu item.');
+    }
+
+    const query = `
+        INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE)
+        VALUES (?, ?, ?)
+    `;
+    db.query(query, [name, description, price], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error adding menu item.');
+        }
+        res.send('Menu item added successfully.');
+    });
+});
+
+app.post('/api/admin/give-promotion', verifyAdmin, (req, res) => {
+    const { employee_id, new_salary } = req.body;
+
+    if (!employee_id || !new_salary) {
+        return res.status(400).send('Employee ID and new salary are required for promotion.');
+    }
+
+    const query = `
+        UPDATE EMPLOYEE
+        SET SALARY = ?
+        WHERE EMPLOYEE_ID = ?
+    `;
+    db.query(query, [new_salary, employee_id], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error updating employee salary.');
+        }
+        res.send('Promotion applied successfully.');
+    });
+});
 
 // Root route
 app.get('/', (req, res) => {

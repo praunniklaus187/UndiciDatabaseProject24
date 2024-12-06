@@ -167,7 +167,16 @@ INSERT INTO EMPLOYEE (NAME, BRANCH_ID, SALARY, ADDRESS_ID) VALUES
 
 INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE) VALUES
                                                    ('Cheese Pizza', 'Classic cheese pizza', 10.99),
-                                                   ('Pepperoni Pizza', 'Pizza with pepperoni topping', 12.99);
+                                                   ('Pepperoni Pizza', 'Pizza with pepperoni topping', 12.99),
+                                                   ('Veggie Pizza', 'Pizza with assorted vegetables', 11.99),
+                                                   ('BBQ Chicken Pizza', 'Pizza with BBQ chicken topping', 13.99),
+                                                   ('Margherita Pizza', 'Pizza with fresh basil and mozzarella', 9.99),
+                                                   ('Hawaiian Pizza', 'Pizza with ham and pineapple topping', 12.49),
+                                                   ('Meat Lover\'s Pizza', 'Pizza with assorted meat toppings', 14.99),
+                                                   ('Gluten-Free Cheese Pizza', 'Gluten-free version of classic cheese pizza', 11.99),
+                                                   ('White Pizza', 'Pizza with ricotta and mozzarella cheese', 11.49),
+                                                   ('Buffalo Chicken Pizza', 'Pizza with buffalo chicken topping', 13.49);
+
 
 INSERT INTO INGREDIENT (NAME, COST) VALUES
                                         ('Cheese', 2.50),
