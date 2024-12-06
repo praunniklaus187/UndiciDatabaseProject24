@@ -605,27 +605,76 @@ app.post('/api/admin/add-employee', (req, res) => {
     });
 });
 
-app.post('/api/admin/add-branch', verifyAdmin, (req, res) => {
-    const { address_id } = req.body;
 
-    if (!address_id) {
-        return res.status(400).send('Address ID is required to add a branch.');
+//Took out verifyadmin (dosent work)
+app.post('/api/admin/add-branch', (req, res) => {
+    const { street_name, house_number, postal_code, city, country } = req.body;
+
+    if (!street_name || !house_number || !postal_code || !city || !country) {
+        return res.status(400).send('All fields are required to add a branch.');
     }
 
-    const query = `
-        INSERT INTO BRANCH (ADDRESS_ID)
-        VALUES (?)
-    `;
-    db.query(query, [address_id], (err) => {
+    db.beginTransaction((err) => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Error adding branch.');
+            return res.status(500).send('Could not start transaction.');
         }
-        res.send('Branch added successfully.');
+
+        const postalCodeQuery = `
+            INSERT IGNORE INTO POSTAL_CODE (POSTAL_CODE, CITY, COUNTRY)
+            VALUES (?, ?, ?)
+        `;
+        db.query(postalCodeQuery, [postal_code, city, country], (err) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error(err);
+                    res.status(500).send('Error inserting postal code.');
+                });
+            }
+
+            const addressQuery = `
+                INSERT INTO ADDRESS (STREET_NAME, HOUSE_NUMBER, POSTAL_CODE)
+                VALUES (?, ?, ?)
+            `;
+            db.query(addressQuery, [street_name, house_number, postal_code], (err, results) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error(err);
+                        res.status(500).send('Error inserting address.');
+                    });
+                }
+
+                const address_id = results.insertId;
+
+                const branchQuery = `
+                INSERT INTO BRANCH (ADDRESS_ID)
+                VALUES (?)
+                `;
+
+                db.query(branchQuery, [address_id], (err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            console.error(err);
+                            res.status(500).send('Error inserting branch.');
+                        });
+                    }
+
+                    db.commit((err) => {
+                        if (err) {
+                            return db.rollback(() => {
+                                console.error(err);
+                                res.status(500).send('Transaction commit failed.');
+                            });
+                        }
+                        res.send('Branch added successfully.');
+                    });
+                });
+            });
+        });
     });
 });
 
-app.post('/api/admin/add-menu-item', verifyAdmin, (req, res) => {
+app.post('/api/admin/add-menu-item', (req, res) => {
     const { name, description, price } = req.body;
 
     if (!name || !description || !price) {
@@ -645,7 +694,7 @@ app.post('/api/admin/add-menu-item', verifyAdmin, (req, res) => {
     });
 });
 
-app.post('/api/admin/give-promotion', verifyAdmin, (req, res) => {
+app.post('/api/admin/give-promotion', (req, res) => {
     const { employee_id, new_salary } = req.body;
 
     if (!employee_id || !new_salary) {
