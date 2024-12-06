@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 300px;
+    }
+    input {
+      margin-bottom: 1em;
+      padding: 0.5em;
+    }
+    button {
+      padding: 0.5em;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      margin-bottom: 1em;
+    }
+  </style>
+</head>
+<body>
+<h1>Employee Login</h1>
+<form action="/employee/login" method="POST">
+  <label for="employee_id">Employee ID:</label>
+  <input type="text" name="employee_id" id="employee_id" required />
+
+  <label for="password">Password:</label>
+  <input type="password" name="password" id="password" required />
+
+  <button type="submit">Login</button>
+</form>
+</body>
+</html>
