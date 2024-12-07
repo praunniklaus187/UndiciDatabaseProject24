@@ -213,7 +213,7 @@ app.post('/order', (req, res) => {
                                     res.status(500).send('Transaction commit failed.');
                                 });
                             }
-                            res.send(`Order placed successfully with Order ID ${order_id}.`);
+                            return res.redirect('/order/thankyou');
                         });
                     });
                 });
@@ -221,6 +221,13 @@ app.post('/order', (req, res) => {
         });
     });
 });
+app.get('/order/thankyou', (req, res) => {
+    //res.sendFile(path.join(__dirname, 'views', 'thankyou.html')); //TODO: Does not work
+    res.send('Thank you for your order! ' +
+        'It will approximately take 30 minutes to deliver your order.')
+});
+
+
 
 // Get the list of products (pizzas)
 app.get('/products', (req, res) => {
