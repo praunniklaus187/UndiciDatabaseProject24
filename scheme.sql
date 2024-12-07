@@ -94,14 +94,14 @@ CREATE TABLE INGREDIENT (
                             COST DECIMAL(10,2)
 );
 
-CREATE TABLE PRODUCT_INGREDIENT (
-                                    PRODUCT_ID INT,
-                                    INGREDIENT_ID INT,
-                                    QUANTITY_REQUIRED DECIMAL(10,2),
-                                    PRIMARY KEY (PRODUCT_ID, INGREDIENT_ID),
-                                    FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID),
-                                    FOREIGN KEY (INGREDIENT_ID) REFERENCES INGREDIENT(INGREDIENT_ID)
-);
+    CREATE TABLE PRODUCT_INGREDIENT (
+                                        PRODUCT_ID INT,
+                                        INGREDIENT_ID INT,
+                                        QUANTITY_REQUIRED DECIMAL(10,2),
+                                        PRIMARY KEY (PRODUCT_ID, INGREDIENT_ID),
+                                        FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID),
+                                        FOREIGN KEY (INGREDIENT_ID) REFERENCES INGREDIENT(INGREDIENT_ID)
+    );
 
 CREATE TABLE STORAGE (
                          BRANCH_ID INT,
@@ -194,9 +194,29 @@ INSERT INTO INGREDIENT (NAME, COST) VALUES
 
 
 INSERT INTO PRODUCT_INGREDIENT (PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED) VALUES
-                                                                                  (1, 1, 0.3),
-                                                                                  (2, 1, 0.3),
-                                                                                  (2, 2, 0.2);
+                                                                                  (1, 1, 0.30),  -- Cheese Pizza requires 0.30 units of Cheese
+                                                                                  (1, 3, 0.20),  -- Cheese Pizza requires 0.20 units of Tomato Sauce
+                                                                                  (2, 1, 0.30),  -- Pepperoni Pizza requires 0.30 units of Cheese
+                                                                                  (2, 2, 0.20),  -- Pepperoni Pizza requires 0.20 units of Pepperoni
+                                                                                  (2, 3, 0.20),  -- Pepperoni Pizza requires 0.20 units of Tomato Sauce
+                                                                                  (3, 1, 0.30),  -- Veggie Pizza requires 0.30 units of Cheese
+                                                                                  (3, 4, 0.50),  -- Veggie Pizza requires 0.50 units of Vegetables
+                                                                                  (3, 3, 0.20),  -- Veggie Pizza requires 0.20 units of Tomato Sauce
+                                                                                  (4, 1, 0.30),  -- BBQ Chicken Pizza requires 0.30 units of Cheese
+                                                                                  (4, 5, 0.40),  -- BBQ Chicken Pizza requires 0.40 units of BBQ Chicken
+                                                                                  (5, 1, 0.30),  -- Margherita Pizza requires 0.30 units of Cheese
+                                                                                  (5, 6, 0.10),  -- Margherita Pizza requires 0.10 units of Basil
+                                                                                  (6, 1, 0.30),  -- Hawaiian Pizza requires 0.30 units of Cheese
+                                                                                  (6, 7, 0.20),  -- Hawaiian Pizza requires 0.20 units of Ham
+                                                                                  (6, 8, 0.20),  -- Hawaiian Pizza requires 0.20 units of Pineapple
+                                                                                  (7, 1, 0.30),  -- Meat Lover's Pizza requires 0.30 units of Cheese
+                                                                                  (7, 9, 0.50),  -- Meat Lover's Pizza requires 0.50 units of Assorted Meats
+                                                                                  (8, 1, 0.30),  -- Gluten-Free Cheese Pizza requires 0.30 units of Cheese
+                                                                                  (9, 10, 0.30), -- White Pizza requires 0.30 units of Ricotta
+                                                                                  (9, 11, 0.30), -- White Pizza requires 0.30 units of Mozzarella
+                                                                                  (10, 1, 0.30), -- Buffalo Chicken Pizza requires 0.30 units of Cheese
+                                                                                  (10, 12, 0.40); -- Buffalo Chicken Pizza requires 0.40 units of Buffalo Chicken
+
 
 INSERT INTO STORAGE (BRANCH_ID, INGREDIENT_ID, QUANTITY) VALUES
                                                              (1, 1, 200.00), -- Branch 1 has 200 units of Cheese
