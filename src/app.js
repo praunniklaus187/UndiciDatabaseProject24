@@ -5,29 +5,29 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const db = require('./db'); // This will ensure DB connection is established
+const db = require('./db');
 const customerRoutes = require('./routes/customerRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const employeeRoutes = require('./routes/employeeRoutes');
-const adminRoutes = require('./routes/adminRoutes');
 const productsRoutes = require('./routes/productsRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const employeeLoginRoutes = require('./routes/employeeLoginRoutes');
+const employeeDashboardRoutes = require('./routes/employeeDashboardRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route definitions
+// Routes
 app.use(customerRoutes);
 app.use(orderRoutes);
-app.use(employeeRoutes);
-app.use(adminRoutes);
 app.use(productsRoutes);
+app.use(adminRoutes);
+app.use(employeeLoginRoutes);
+app.use(employeeDashboardRoutes);
 
 // Root route
 app.get('/', (req, res) => {

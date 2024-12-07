@@ -180,7 +180,18 @@ INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE) VALUES
 
 INSERT INTO INGREDIENT (NAME, COST) VALUES
                                         ('Cheese', 2.50),
-                                        ('Pepperoni', 3.00);
+                                        ('Pepperoni', 3.00),
+                                        ('Tomato Sauce', 1.00),
+                                        ('Vegetables', 2.00),
+                                        ('BBQ Chicken', 3.50),
+                                        ('Basil', 1.50),
+                                        ('Ham', 3.00),
+                                        ('Pineapple', 2.50),
+                                        ('Assorted Meats', 4.00),
+                                        ('Ricotta', 2.50),
+                                        ('Mozzarella', 2.50),
+                                        ('Buffalo Chicken', 3.50);
+
 
 INSERT INTO PRODUCT_INGREDIENT (PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED) VALUES
                                                                                   (1, 1, 0.3),
@@ -188,8 +199,22 @@ INSERT INTO PRODUCT_INGREDIENT (PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED) VA
                                                                                   (2, 2, 0.2);
 
 INSERT INTO STORAGE (BRANCH_ID, INGREDIENT_ID, QUANTITY) VALUES
-                                                             (1, 1, 100.0),
-                                                             (1, 2, 50.0);
+                                                             (1, 1, 200.00), -- Branch 1 has 200 units of Cheese
+                                                             (1, 2, 100.00), -- Branch 1 has 100 units of Pepperoni
+                                                             (1, 3, 150.00), -- Branch 1 has 150 units of Tomato Sauce
+                                                             (1, 4, 80.00),  -- Branch 1 has 80 units of Vegetables
+                                                             (1, 5, 50.00),  -- Branch 1 has 50 units of BBQ Chicken
+                                                             (1, 6, 40.00),  -- Branch 1 has 40 units of Basil
+                                                             (2, 1, 180.00), -- Branch 2 has 180 units of Cheese
+                                                             (2, 2, 90.00),  -- Branch 2 has 90 units of Pepperoni
+                                                             (2, 7, 70.00),  -- Branch 2 has 70 units of Ham
+                                                             (2, 8, 60.00),  -- Branch 2 has 60 units of Pineapple
+                                                             (2, 9, 40.00),  -- Branch 2 has 40 units of Assorted Meats
+                                                             (2, 10, 50.00), -- Branch 2 has 50 units of Ricotta
+                                                             (2, 11, 100.00),-- Branch 2 has 100 units of Mozzarella
+                                                             (1, 12, 60.00), -- Branch 1 has 60 units of Buffalo Chicken
+                                                             (2, 12, 70.00); -- Branch 2 has 70 units of Buffalo Chicken
+
 
 INSERT INTO `ORDER` (STATUS, CUSTOMER_ID, BRANCH_ID, ORDER_DATE) VALUES
                                                                      ('Completed', 'CUST001', 1, '2024-12-02 12:30:00'),
