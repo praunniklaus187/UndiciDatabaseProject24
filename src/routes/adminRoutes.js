@@ -1,8 +1,12 @@
-// src/routes/adminRoutes.js
 const express = require('express');
+const path = require('path'); // Import the path module
 const db = require('../db');
 
 const router = express.Router();
+
+router.get('/employee/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '../views/admin.html')); // Ensure the path is correct
+});
 
 // Add employee route (Admin only)
 router.post('/api/admin/add-employee', (req, res) => {
