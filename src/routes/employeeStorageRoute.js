@@ -6,7 +6,6 @@ const router = express.Router();
 
 // Employee Page
 router.get('/employee/admin', (req, res) => {
-    // Simple employee page with a link to storage
     res.send(`
         <!DOCTYPE html>
         <html>
@@ -22,14 +21,19 @@ router.get('/employee/admin', (req, res) => {
 
 // Employee Storage Overview
 router.get('/employee/storage', (req, res) => {
-    const query = `
+    const selectedBranchId = req.query.branch || null; // Get the branch filter from the query parameter
+
+    const baseQuery = `
         SELECT S.BRANCH_ID, S.INGREDIENT_ID, S.QUANTITY, I.NAME AS INGREDIENT_NAME, I.COST
         FROM STORAGE S
-                 JOIN INGREDIENT I ON S.INGREDIENT_ID = I.INGREDIENT_ID
+        JOIN INGREDIENT I ON S.INGREDIENT_ID = I.INGREDIENT_ID
+        ${selectedBranchId ? 'WHERE S.BRANCH_ID = ?' : ''}
         ORDER BY S.BRANCH_ID, I.NAME
     `;
 
-    db.query(query, (err, storageItems) => {
+    const queryParams = selectedBranchId ? [selectedBranchId] : [];
+
+    db.query(baseQuery, queryParams, (err, storageItems) => {
         if (err) {
             console.error(err);
             return res.status(500).send('Database query failed.');
@@ -49,13 +53,13 @@ router.get('/employee/storage', (req, res) => {
                 return res.status(500).send('Error fetching branches.');
             }
 
-            db.query('SELECT INGREDIENT_ID, NAME, COST FROM INGREDIENT ORDER BY NAME', (err, ingrRes) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send('Error fetching ingredients.');
-                }
+            const branchOptions = branchRes.map(branch => `
+                <option value="${branch.BRANCH_ID}" ${branch.BRANCH_ID == selectedBranchId ? 'selected' : ''}>
+                    Branch ${branch.BRANCH_ID}
+                </option>
+            `).join('');
 
-                let html = `
+            let html = `
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -68,19 +72,29 @@ router.get('/employee/storage', (req, res) => {
                     th { background: #f0f0f0; }
                     h2 { margin-top: 2em; }
                     a { margin-right: 1em; }
+                    form { margin-bottom: 1em; }
                   </style>
                 </head>
                 <body>
                   <h1>Employee - All Branches Storage</h1>
                   <p><a href="/employee/home">Back to Employee Page</a></p>
+
+                  <form method="get" action="/employee/storage">
+                    <label for="branch">Filter by Branch:</label>
+                    <select name="branch" id="branch">
+                      <option value="">All Branches</option>
+                      ${branchOptions}
+                    </select>
+                    <button type="submit">Filter</button>
+                  </form>
                 `;
 
-                if (Object.keys(branches).length === 0) {
-                    html += `<p>No storage data available.</p>`;
-                } else {
-                    for (const branchId in branches) {
-                        html += `<h2>Branch ${branchId}</h2>`;
-                        html += `
+            if (Object.keys(branches).length === 0) {
+                html += `<p>No storage data available.</p>`;
+            } else {
+                for (const branchId in branches) {
+                    html += `<h2>Branch ${branchId}</h2>`;
+                    html += `
                         <table>
                           <tr>
                             <th>Ingredient ID</th>
@@ -89,8 +103,8 @@ router.get('/employee/storage', (req, res) => {
                             <th>Cost (per unit)</th>
                           </tr>
                         `;
-                        for (const item of branches[branchId]) {
-                            html += `
+                    for (const item of branches[branchId]) {
+                        html += `
                             <tr>
                               <td>${item.INGREDIENT_ID}</td>
                               <td>${item.INGREDIENT_NAME}</td>
@@ -98,22 +112,19 @@ router.get('/employee/storage', (req, res) => {
                               <td>${item.COST}</td>
                             </tr>
                             `;
-                        }
-                        html += `</table>`;
                     }
+                    html += `</table>`;
                 }
+            }
 
-                html += `
+            html += `
                 </body>
                 </html>
                 `;
 
-                res.send(html);
-            });
+            res.send(html);
         });
     });
 });
-
-// Note: The ordering functionality has been removed for employees.
 
 module.exports = router;

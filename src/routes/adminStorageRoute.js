@@ -5,11 +5,7 @@ const db = require('../db');
 
 const router = express.Router();
 
-
-
 router.get('/employee/admin', (req, res) => {
-
-    // Simple admin page with a link to storage
     res.send(`
         <!DOCTYPE html>
         <html>
@@ -24,14 +20,19 @@ router.get('/employee/admin', (req, res) => {
 });
 
 router.get('/admin/storage', (req, res) => {
-    const query = `
+    const selectedBranchId = req.query.branch || null; // Get the branch filter from query parameter
+
+    const baseQuery = `
         SELECT S.BRANCH_ID, S.INGREDIENT_ID, S.QUANTITY, I.NAME AS INGREDIENT_NAME, I.COST
         FROM STORAGE S
         JOIN INGREDIENT I ON S.INGREDIENT_ID = I.INGREDIENT_ID
+        ${selectedBranchId ? 'WHERE S.BRANCH_ID = ?' : ''}
         ORDER BY S.BRANCH_ID, I.NAME
     `;
 
-    db.query(query, (err, storageItems) => {
+    const queryParams = selectedBranchId ? [selectedBranchId] : [];
+
+    db.query(baseQuery, queryParams, (err, storageItems) => {
         if (err) {
             console.error(err);
             return res.status(500).send('Database query failed.');
@@ -57,6 +58,12 @@ router.get('/admin/storage', (req, res) => {
                     return res.status(500).send('Error fetching ingredients.');
                 }
 
+                const branchOptions = branchRes.map(branch => `
+                    <option value="${branch.BRANCH_ID}" ${branch.BRANCH_ID == selectedBranchId ? 'selected' : ''}>
+                        Branch ${branch.BRANCH_ID}
+                    </option>
+                `).join('');
+
                 let html = `
                 <!DOCTYPE html>
                 <html lang="en">
@@ -76,6 +83,15 @@ router.get('/admin/storage', (req, res) => {
                 <body>
                   <h1>Admin - All Branches Storage</h1>
                   <p><a href="/employee/admin">Back to Admin Page</a></p>
+
+                  <form method="get" action="/admin/storage">
+                    <label for="branch">Filter by Branch:</label>
+                    <select name="branch" id="branch">
+                      <option value="">All Branches</option>
+                      ${branchOptions}
+                    </select>
+                    <button type="submit">Filter</button>
+                  </form>
                 `;
 
                 if (Object.keys(branches).length === 0) {
@@ -174,7 +190,7 @@ router.post('/admin/order-ingredients', (req, res) => {
     const updateStorage = `
         INSERT INTO STORAGE (BRANCH_ID, INGREDIENT_ID, QUANTITY)
         VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE QUANTITY = QUANTITY + VALUES(QUANTITY)
+            ON DUPLICATE KEY UPDATE QUANTITY = QUANTITY + VALUES(QUANTITY)
     `;
 
     db.query(updateStorage, [branch_id, ingredient_id, qty], (err) => {
