@@ -2,11 +2,246 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Storage</title>
+    <title>Admin Storage Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2em;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        select, input[type="number"] {
+            padding: 0.5em;
+            margin: 0.5em 0;
+            width: 200px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 0.7em;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .form-group {
+            margin: 1em 0;
+        }
+        button {
+            padding: 0.7em 1.5em;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #total_cost {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome to the admin storage</h1>
-  <p>This is the content of the new webpage.</p>
+<h1>Admin Storage Management</h1>
 
+<div class="form-group">
+    <label for="branch_select">Select Branch:</label><br>
+    <select id="branch_select">
+        <option value="">-- Select a Branch --</option>
+    </select>
+</div>
+
+<div id="storage_overview">
+    <!-- Storage table will be inserted here -->
+</div>
+
+<h2>Order New Ingredients</h2>
+<form id="order_form">
+    <div class="form-group">
+        <label for="ingredient_select">Select Ingredient:</label><br>
+        <select id="ingredient_select" required>
+            <option value="">-- Select an Ingredient --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="order_quantity">Quantity to Order:</label><br>
+        <input type="number" id="order_quantity" min="0.1" step="0.1" required>
+    </div>
+
+    <div class="form-group">
+        <label>Total Cost: $<span id="total_cost">0.00</span></label>
+    </div>
+
+    <button type="submit">Place Order</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const branchSelect = document.getElementById('branch_select');
+        const storageOverview = document.getElementById('storage_overview');
+        const ingredientSelect = document.getElementById('ingredient_select');
+        const orderQuantity = document.getElementById('order_quantity');
+        const totalCostSpan = document.getElementById('total_cost');
+        const orderForm = document.getElementById('order_form');
+
+        let ingredients = [];
+
+        // Fetch and populate branches
+        fetch('/api/admin/branches')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch.BRANCH_ID;
+                    option.textContent = `Branch ${branch.BRANCH_ID}`;
+                    branchSelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error fetching branches:', err));
+
+        // Fetch and populate ingredients
+        fetch('/api/admin/ingredients')
+            .then(response => response.json())
+            .then(data => {
+                ingredients = data; // Store for later use
+                data.forEach(ingredient => {
+                    const option = document.createElement('option');
+                    option.value = ingredient.INGREDIENT_ID;
+                    option.textContent = `${ingredient.NAME} ($${ingredient.COST} per unit)`;
+                    option.setAttribute('data-cost', ingredient.COST);
+                    ingredientSelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error fetching ingredients:', err));
+
+        // Handle branch selection
+        branchSelect.addEventListener('change', () => {
+            const branchId = branchSelect.value;
+            if (branchId) {
+                fetch(`/api/admin/storage?branch_id=${branchId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        displayStorageData(branchId, data);
+                    })
+                    .catch(err => console.error('Error fetching storage data:', err));
+            } else {
+                storageOverview.innerHTML = '';
+            }
+        });
+
+        // Display storage data in a table
+        function displayStorageData(branchId, data) {
+            if (data.length === 0) {
+                storageOverview.innerHTML = `<p>No storage data available for Branch ${branchId}.</p>`;
+                return;
+            }
+
+            let tableHTML = `
+                    <h2>Storage Overview for Branch ${branchId}</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ingredient ID</th>
+                                <th>Ingredient Name</th>
+                                <th>Quantity</th>
+                                <th>Cost (per unit)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+            data.forEach(item => {
+                tableHTML += `
+                        <tr>
+                            <td>${item.INGREDIENT_ID}</td>
+                            <td>${item.ingredient_name}</td>
+                            <td>${item.QUANTITY}</td>
+                            <td>$${item.COST.toFixed(2)}</td>
+                        </tr>
+                    `;
+            });
+
+            tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+
+            storageOverview.innerHTML = tableHTML;
+        }
+
+        // Calculate total cost whenever ingredient or quantity changes
+        function updateTotalCost() {
+            const selectedOption = ingredientSelect.options[ingredientSelect.selectedIndex];
+            const costPerUnit = parseFloat(selectedOption.getAttribute('data-cost')) || 0;
+            const quantity = parseFloat(orderQuantity.value) || 0;
+            const totalCost = costPerUnit * quantity;
+            totalCostSpan.textContent = totalCost.toFixed(2);
+        }
+
+        ingredientSelect.addEventListener('change', updateTotalCost);
+        orderQuantity.addEventListener('input', updateTotalCost);
+
+        // Handle order form submission
+        orderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const branchId = branchSelect.value;
+            const ingredientId = ingredientSelect.value;
+            const quantity = orderQuantity.value;
+
+            if (!branchId) {
+                alert('Please select a branch.');
+                return;
+            }
+
+            if (!ingredientId) {
+                alert('Please select an ingredient.');
+                return;
+            }
+
+            if (!quantity || quantity <= 0) {
+                alert('Please enter a valid quantity.');
+                return;
+            }
+
+            // Send POST request to order ingredients
+            fetch('/admin/add-storage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ branch_id: branchId, ingredient_id: ingredientId, quantity: quantity })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Ingredient ordered successfully.');
+                        // Refresh storage overview
+                        fetch(`/api/admin/storage?branch_id=${branchId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displayStorageData(branchId, data);
+                            })
+                            .catch(err => console.error('Error fetching storage data:', err));
+                        // Reset form
+                        orderForm.reset();
+                        totalCostSpan.textContent = '0.00';
+                    } else {
+                        response.text().then(text => alert(`Error: ${text}`));
+                    }
+                })
+                .catch(err => {
+                    console.error('Error ordering ingredient:', err);
+                    alert('An error occurred while placing the order.');
+                });
+        });
+    });
+</script>
 </body>
 </html>

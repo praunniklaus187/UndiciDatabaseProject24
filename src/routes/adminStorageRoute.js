@@ -6,7 +6,6 @@ const db = require('../db');
 const router = express.Router();
 
 
-// Just check if we're logged in and if the current role is admin
 
 router.get('/employee/admin', (req, res) => {
 

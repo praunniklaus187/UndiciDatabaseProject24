@@ -36,6 +36,7 @@ router.get('/employee/home', (req, res) => {
         </head>
         <body>
           <h1>Employee Dashboard</h1>
+          <button onclick="location.href = '/employee/storage'">Storage</button>
           <h2>Unfinished Orders</h2>
         `;
 

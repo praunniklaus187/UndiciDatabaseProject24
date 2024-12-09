@@ -13,6 +13,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const employeeLoginRoutes = require('./routes/employeeLoginRoutes');
 const employeeDashboardRoutes = require('./routes/employeeDashboardRoutes');
 const adminStorageRoute = require('./routes/adminStorageRoute');
+const employeeStorageRoute = require('./routes/employeeStorageRoute');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +32,7 @@ app.use(adminRoutes);
 app.use(employeeLoginRoutes);
 app.use(employeeDashboardRoutes);
 app.use(adminStorageRoute);
+app.use(employeeStorageRoute);
 
 // Root route
 app.get('/', (req, res) => {
