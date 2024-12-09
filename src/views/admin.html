@@ -6,201 +6,238 @@
   <title>Admin Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 2em;
-    }
-    h1 {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
       color: #333;
     }
+
+    header {
+      background-color: #ff5733;
+      color: white;
+      padding: 1.5rem 0;
+      font-size: 1.8rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-button {
+      position: relative;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: white;
+      color: #ff5733;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease;
+    }
+
+    .home-button:hover {
+      background-color: #ffded6;
+    }
+
+
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #ff5733;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+
     form {
-      margin-bottom: 2em;
-      padding: 1em;
-      border: 1px solid #ccc;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
       border-radius: 8px;
       background-color: #f9f9f9;
     }
-    form div {
-      margin-bottom: 1em;
-    }
+
     label {
       display: block;
-      margin-bottom: 0.5em;
       font-weight: bold;
+      margin-top: 1rem;
     }
-    input, select, button {
+
+    input,
+    select,
+    button,
+    textarea {
       width: 100%;
-      padding: 0.5em;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 4px;
+      font-size: 1rem;
     }
+
+    textarea {
+      resize: none;
+    }
+
     button {
-      background-color: #007BFF;
-      color: #fff;
-      font-size: 1em;
+      background-color: #ff5733;
+      color: white;
+      border: none;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
     }
+
     button:hover {
-      background-color: #0056b3;
+      background-color: #e34f2c;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      background: #333;
+      color: white;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .home-button {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
-<h1>Admin Dashboard</h1>
 
-<button onclick="location.href = '/admin/storage'">Storage</button>
+<header>
+  Undici - Admin Dashboard
 
-<!-- Add Employee -->
-<form id="add-employee-form">
-  <h2>Add Employee</h2>
-  <div>
+</header>
+
+<main>
+  <h1>Admin Dashboard</h1>
+
+  <button onclick="location.href = '/admin/storage';">Storage</button>
+
+  <!-- Add Employee -->
+  <form id="add-employee-form">
+    <h2>Add Employee</h2>
     <label for="employee-name">Name:</label>
     <input type="text" id="employee-name" name="name" required>
-  </div>
-  <div>
+
     <label for="employee-branch-id">Branch ID:</label>
     <input type="number" id="employee-branch-id" name="branch_id" required>
-  </div>
-  <div>
+
     <label for="employee-salary">Salary:</label>
     <input type="number" id="employee-salary" name="salary" step="0.01" required>
-  </div>
-  <div>
-    <label for="street_name">Street Name:</label><br>
-    <input type="text" id="street_name" name="street_name" required><br><br>
-  </div>
-  <div>
-    <label for="house_number">House Number:</label><br>
-    <input type="text" id="house_number" name="house_number" required><br><br>
-  </div>
-  <div>
-    <label for="postal_code">Postal Code:</label><br>
-    <input type="text" id="postal_code" name="postal_code" required><br><br>
-  </div>
-  <div>
-    <label for="city">City:</label><br>
-    <input type="text" id="city" name="city" required><br><br>
-  </div>
-  <div>
-    <label for="country">Country:</label><br>
-    <input type="text" id="country" name="country" required><br><br>
-  </div>
-  <div>
+
+    <label for="street_name">Street Name:</label>
+    <input type="text" id="street_name" name="street_name" required>
+
+    <label for="house_number">House Number:</label>
+    <input type="text" id="house_number" name="house_number" required>
+
+    <label for="postal_code">Postal Code:</label>
+    <input type="text" id="postal_code" name="postal_code" required>
+
+    <label for="city">City:</label>
+    <input type="text" id="city" name="city" required>
+
+    <label for="country">Country:</label>
+    <input type="text" id="country" name="country" required>
+
     <label for="employee-password">Password:</label>
     <input type="password" id="employee-password" name="password" required>
-  </div>
-  <div>
+
     <label for="employee-role">Role:</label>
     <select id="employee-role" name="role" required>
       <option value="employee">Employee</option>
       <option value="admin">Admin</option>
     </select>
-  </div>
-  <button type="submit">Add Employee</button>
-</form>
 
-<!-- Add Branch -->
-<form id="add-branch-form">
-  <h2>Add Branch</h2>
-  <div>
-    <label for="street_name">Street Name:</label><br>
-    <input type="text" id="street_name_branch" name="street_name" required><br><br>
-  </div>
-  <div>
-    <label for="house_number">House Number:</label><br>
-    <input type="text" id="house_number_branch" name="house_number" required><br><br>
-  </div>
-  <div>
-    <label for="postal_code">Postal Code:</label><br>
-    <input type="text" id="postal_code_branch" name="postal_code" required><br><br>
-  </div>
-  <div>
-    <label for="city">City:</label><br>
-    <input type="text" id="city_branch" name="city" required><br><br>
-  </div>
-  <div>
-    <label for="country">Country:</label><br>
-    <input type="text" id="country_branch" name="country" required><br><br>
-  </div>
-  <button type="submit">Add Branch</button>
-</form>
+    <button type="submit">Add Employee</button>
+  </form>
 
-<!-- Add Menu Item -->
-<form id="add-menu-item-form">
-  <h2>Add Menu Item</h2>
-  <div>
+  <!-- Add Branch -->
+  <form id="add-branch-form">
+    <h2>Add Branch</h2>
+    <label for="street_name_branch">Street Name:</label>
+    <input type="text" id="street_name_branch" name="street_name" required>
+
+    <label for="house_number_branch">House Number:</label>
+    <input type="text" id="house_number_branch" name="house_number" required>
+
+    <label for="postal_code_branch">Postal Code:</label>
+    <input type="text" id="postal_code_branch" name="postal_code" required>
+
+    <label for="city_branch">City:</label>
+    <input type="text" id="city_branch" name="city" required>
+
+    <label for="country_branch">Country:</label>
+    <input type="text" id="country_branch" name="country" required>
+
+    <button type="submit">Add Branch</button>
+  </form>
+
+  <!-- Add Menu Item -->
+  <form id="add-menu-item-form">
+    <h2>Add Menu Item</h2>
     <label for="menu-item-name">Name:</label>
     <input type="text" id="menu-item-name" name="name" required>
-  </div>
-  <div>
+
     <label for="menu-item-description">Description:</label>
     <textarea id="menu-item-description" name="description" rows="3" required></textarea>
-  </div>
-  <div>
+
     <label for="menu-item-price">Price:</label>
     <input type="number" id="menu-item-price" name="price" step="0.01" required>
-  </div>
-  <button type="submit">Add Menu Item</button>
-</form>
 
-<!-- Give Promotion -->
-<form id="give-promotion-form">
-  <h2>Give Promotion</h2>
-  <div>
+    <button type="submit">Add Menu Item</button>
+  </form>
+
+  <!-- Give Promotion -->
+  <form id="give-promotion-form">
+    <h2>Give Promotion</h2>
     <label for="promotion-employee-id">Employee ID:</label>
     <input type="text" id="promotion-employee-id" name="employee_id" required>
-  </div>
-  <div>
+
     <label for="promotion-new-salary">New Salary:</label>
     <input type="number" id="promotion-new-salary" name="new_salary" step="0.01" required>
-  </div>
-  <button type="submit">Give Promotion</button>
-</form>
 
-<script>
-  // Example event handlers for forms
-  document.getElementById('add-employee-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const response = await fetch('/api/admin/add-employee', {
-      method: 'POST',
-      body: JSON.stringify(Object.fromEntries(data)),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    alert(await response.text());
-  });
+    <button type="submit">Give Promotion</button>
+  </form>
 
-  document.getElementById('add-branch-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const response = await fetch('/api/admin/add-branch', {
-      method: 'POST',
-      body: JSON.stringify(Object.fromEntries(data)),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    alert(await response.text());
-  });
+  <button class="home-button" onclick="window.location.href='http://localhost:3000';">Home</button>
 
-  document.getElementById('add-menu-item-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const response = await fetch('/api/admin/add-menu-item', {
-      method: 'POST',
-      body: JSON.stringify(Object.fromEntries(data)),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    alert(await response.text());
-  });
+</main>
 
-  document.getElementById('give-promotion-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const response = await fetch('/api/admin/give-promotion', {
-      method: 'POST',
-      body: JSON.stringify(Object.fromEntries(data)),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    alert(await response.text());
-  });
-</script>
+<footer>
+  &copy; 2024 Undici. All rights reserved.
+</footer>
+
 </body>
 </html>

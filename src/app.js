@@ -36,13 +36,9 @@ app.use(employeeStorageRoute);
 
 // Root route
 app.get('/', (req, res) => {
-    res.send(`
-        <h1>Welcome to the Pizza Shop!</h1>
-        <p><a href="/signup">Sign Up</a> to create an account.</p>
-        <p>Already have an account? <a href="/order">Place an Order</a>.</p>
-        <p>Are you an employee? <a href="/employee">Sign in here</a>.</p>
-    `);
+    res.sendFile(path.join(__dirname, 'views', 'root.html'));
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
