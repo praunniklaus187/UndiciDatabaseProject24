@@ -143,24 +143,87 @@ router.post('/api/admin/add-branch', (req, res) => {
 });
 
 router.post('/api/admin/add-menu-item', (req, res) => {
-    const { name, description, price } = req.body;
+    const { name, description, price, ingredients } = req.body;
 
-    if (!name || !description || !price) {
-        return res.status(400).send('All fields are required to add a menu item.');
+    if (!name || !description || !price || !Array.isArray(ingredients) || ingredients.length === 0) {
+        return res.status(400).send('All fields are required, including at least one ingredient.');
     }
 
-    const query = `
-        INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE)
-        VALUES (?, ?, ?)
-    `;
-    db.query(query, [name, description, price], (err) => {
+    db.beginTransaction((err) => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Error adding menu item.');
+            return res.status(500).send('Could not start transaction.');
         }
-        res.send('Menu item added successfully.');
+
+        // Insert the product into the PRODUCT table
+        const productQuery = `
+      INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE)
+      VALUES (?, ?, ?)
+    `;
+        db.query(productQuery, [name, description, price], (err, result) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error(err);
+                    res.status(500).send('Error adding menu item.');
+                });
+            }
+
+            const productId = result.insertId; // Get the newly created product's ID
+
+            // Prepare to insert ingredients into PRODUCT_INGREDIENT
+            const ingredientQueries = ingredients.map(ingredient => {
+                return new Promise((resolve, reject) => {
+                    const ingredientQuery = `
+            INSERT INTO PRODUCT_INGREDIENT (PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED)
+            VALUES (?, ?, ?)
+          `;
+                    db.query(
+                        ingredientQuery,
+                        [productId, ingredient.ingredient_id, ingredient.quantity_required],
+                        (err) => {
+                            if (err) reject(err);
+                            else resolve();
+                        }
+                    );
+                });
+            });
+
+            // Execute all ingredient insertions
+            Promise.all(ingredientQueries)
+                .then(() => {
+                    db.commit((err) => {
+                        if (err) {
+                            return db.rollback(() => {
+                                console.error(err);
+                                res.status(500).send('Transaction commit failed.');
+                            });
+                        }
+                        res.send('Menu item and ingredients added successfully.');
+                    });
+                })
+                .catch((error) => {
+                    db.rollback(() => {
+                        console.error(error);
+                        res.status(500).send('Error adding ingredients to menu item.');
+                    });
+                });
+        });
     });
 });
+
+
+// Get all ingredients
+router.get('/api/admin/get-ingredients', (req, res) => {
+    const query = `SELECT INGREDIENT_ID, NAME FROM INGREDIENT ORDER BY NAME ASC`;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Error fetching ingredients.' });
+        }
+        res.json(results);
+    });
+});
+
 
 router.post('/api/admin/give-promotion', (req, res) => {
     const { employee_id, new_salary } = req.body;

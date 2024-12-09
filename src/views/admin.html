@@ -25,10 +25,8 @@
     }
 
     .home-button {
-      position: relative;
+      position: absolute;
       left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
       background-color: white;
       color: #ff5733;
       border: none;
@@ -81,12 +79,15 @@
     select,
     button,
     textarea {
-      width: 100%;
+      width: calc(100% - 1.5rem); /* Adjust width slightly for better alignment */
       padding: 0.75rem;
       margin-top: 0.5rem;
+      margin-left: 0.75rem; /* Add consistent left margin */
+      margin-right: 0.75rem; /* Add consistent right margin */
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 1rem;
+      box-sizing: border-box; /* Ensure padding is included in the width */
     }
 
     textarea {
@@ -125,119 +126,272 @@
         padding: 0.5rem 1rem;
       }
 
-      .home-button {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.8rem;
-      }
     }
   </style>
-</head>
-<body>
+  </head>
+  <body>
 
-<header>
-  Undici - Admin Dashboard
+    <header>
+      Undici - Admin Dashboard
+      <button class="home-button" onclick="window.location.href='http://localhost:3000';">Logout</button>
+    </header>
 
-</header>
+    <main>
+      <h1>Admin Dashboard</h1>
 
-<main>
-  <h1>Admin Dashboard</h1>
+        <button onclick="location.href = '/admin/storage';">Storage</button>
 
-  <button onclick="location.href = '/admin/storage';">Storage</button>
-
-  <!-- Add Employee -->
   <form id="add-employee-form">
     <h2>Add Employee</h2>
-    <label for="employee-name">Name:</label>
-    <input type="text" id="employee-name" name="name" required>
-
-    <label for="employee-branch-id">Branch ID:</label>
-    <input type="number" id="employee-branch-id" name="branch_id" required>
-
-    <label for="employee-salary">Salary:</label>
-    <input type="number" id="employee-salary" name="salary" step="0.01" required>
-
-    <label for="street_name">Street Name:</label>
-    <input type="text" id="street_name" name="street_name" required>
-
-    <label for="house_number">House Number:</label>
-    <input type="text" id="house_number" name="house_number" required>
-
-    <label for="postal_code">Postal Code:</label>
-    <input type="text" id="postal_code" name="postal_code" required>
-
-    <label for="city">City:</label>
-    <input type="text" id="city" name="city" required>
-
-    <label for="country">Country:</label>
-    <input type="text" id="country" name="country" required>
-
-    <label for="employee-password">Password:</label>
-    <input type="password" id="employee-password" name="password" required>
-
-    <label for="employee-role">Role:</label>
-    <select id="employee-role" name="role" required>
-      <option value="employee">Employee</option>
-      <option value="admin">Admin</option>
-    </select>
-
+    <div>
+      <label for="employee-name">Name:</label>
+      <input type="text" id="employee-name" name="name" required>
+    </div>
+    <div>
+      <label for="employee-branch-id">Branch ID:</label>
+      <input type="number" id="employee-branch-id" name="branch_id" required>
+    </div>
+    <div>
+      <label for="employee-salary">Salary:</label>
+      <input type="number" id="employee-salary" name="salary" step="0.01" required>
+    </div>
+    <div>
+      <label for="street_name">Street Name:</label><br>
+      <input type="text" id="street_name" name="street_name" required><br><br>
+    </div>
+    <div>
+      <label for="house_number">House Number:</label><br>
+      <input type="text" id="house_number" name="house_number" required><br><br>
+    </div>
+    <div>
+      <label for="postal_code">Postal Code:</label><br>
+      <input type="text" id="postal_code" name="postal_code" required><br><br>
+    </div>
+    <div>
+      <label for="city">City:</label><br>
+      <input type="text" id="city" name="city" required><br><br>
+    </div>
+    <div>
+      <label for="country">Country:</label><br>
+      <input type="text" id="country" name="country" required><br><br>
+    </div>
+    <div>
+      <label for="employee-password">Password:</label>
+      <input type="password" id="employee-password" name="password" required>
+    </div>
+    <div>
+      <label for="employee-role">Role:</label>
+      <select id="employee-role" name="role" required>
+        <option value="employee">Employee</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
     <button type="submit">Add Employee</button>
   </form>
 
   <!-- Add Branch -->
   <form id="add-branch-form">
     <h2>Add Branch</h2>
-    <label for="street_name_branch">Street Name:</label>
-    <input type="text" id="street_name_branch" name="street_name" required>
-
-    <label for="house_number_branch">House Number:</label>
-    <input type="text" id="house_number_branch" name="house_number" required>
-
-    <label for="postal_code_branch">Postal Code:</label>
-    <input type="text" id="postal_code_branch" name="postal_code" required>
-
-    <label for="city_branch">City:</label>
-    <input type="text" id="city_branch" name="city" required>
-
-    <label for="country_branch">Country:</label>
-    <input type="text" id="country_branch" name="country" required>
-
+    <div>
+      <label for="street_name">Street Name:</label><br>
+      <input type="text" id="street_name_branch" name="street_name" required><br><br>
+    </div>
+    <div>
+      <label for="house_number">House Number:</label><br>
+      <input type="text" id="house_number_branch" name="house_number" required><br><br>
+    </div>
+    <div>
+      <label for="postal_code">Postal Code:</label><br>
+      <input type="text" id="postal_code_branch" name="postal_code" required><br><br>
+    </div>
+    <div>
+      <label for="city">City:</label><br>
+      <input type="text" id="city_branch" name="city" required><br><br>
+    </div>
+    <div>
+      <label for="country">Country:</label><br>
+      <input type="text" id="country_branch" name="country" required><br><br>
+    </div>
     <button type="submit">Add Branch</button>
   </form>
 
   <!-- Add Menu Item -->
+  <!-- Add Menu Item -->
   <form id="add-menu-item-form">
     <h2>Add Menu Item</h2>
-    <label for="menu-item-name">Name:</label>
-    <input type="text" id="menu-item-name" name="name" required>
+    <div>
+      <label for="menu-item-name">Name:</label>
+      <input type="text" id="menu-item-name" name="name" required>
+    </div>
+    <div>
+      <label for="menu-item-description">Description:</label>
+      <textarea id="menu-item-description" name="description" rows="3" required></textarea>
+    </div>
+    <div>
+      <label for="menu-item-price">Price:</label>
+      <input type="number" id="menu-item-price" name="price" step="0.01" required>
+    </div>
 
-    <label for="menu-item-description">Description:</label>
-    <textarea id="menu-item-description" name="description" rows="3" required></textarea>
-
-    <label for="menu-item-price">Price:</label>
-    <input type="number" id="menu-item-price" name="price" step="0.01" required>
+    <h3>Ingredients</h3>
+    <div id="ingredients-container">
+      <!-- Ingredient selection rows will be added here dynamically -->
+    </div>
+    <button type="button" id="add-ingredient-button">Add Ingredient</button>
 
     <button type="submit">Add Menu Item</button>
   </form>
 
+
   <!-- Give Promotion -->
   <form id="give-promotion-form">
     <h2>Give Promotion</h2>
-    <label for="promotion-employee-id">Employee ID:</label>
-    <input type="text" id="promotion-employee-id" name="employee_id" required>
-
-    <label for="promotion-new-salary">New Salary:</label>
-    <input type="number" id="promotion-new-salary" name="new_salary" step="0.01" required>
-
+    <div>
+      <label for="promotion-employee-id">Employee ID:</label>
+      <input type="text" id="promotion-employee-id" name="employee_id" required>
+    </div>
+    <div>
+      <label for="promotion-new-salary">New Salary:</label>
+      <input type="number" id="promotion-new-salary" name="new_salary" step="0.01" required>
+    </div>
     <button type="submit">Give Promotion</button>
   </form>
 
-  <button class="home-button" onclick="window.location.href='http://localhost:3000';">Home</button>
+  <button class="home-button" onclick="window.location.href='http://localhost:3000';">Logout</button>
 
 </main>
 
 <footer>
   &copy; 2024 Undici. All rights reserved.
 </footer>
+
+<script>
+  // Fetch ingredients from the server
+  async function fetchIngredients() {
+    try {
+      const response = await fetch('/api/admin/get-ingredients');
+      if (!response.ok) throw new Error('Failed to fetch ingredients.');
+      const ingredients = await response.json();
+      return ingredients;
+    } catch (error) {
+      console.error(error);
+      alert('Error fetching ingredients.');
+      return [];
+    }
+  }
+
+  // Add a new ingredient row
+  function addIngredientRow(ingredients) {
+    const container = document.getElementById('ingredients-container');
+    const row = document.createElement('div');
+    row.classList.add('ingredient-row');
+    row.style.marginBottom = '1em';
+
+    // Ingredient select
+    const select = document.createElement('select');
+    select.name = 'ingredient_id';
+    select.required = true;
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- Select Ingredient --';
+    select.appendChild(defaultOption);
+
+    ingredients.forEach(ingredient => {
+      const option = document.createElement('option');
+      option.value = ingredient.INGREDIENT_ID;
+      option.textContent = ingredient.NAME;
+      select.appendChild(option);
+    });
+
+    // Quantity input
+    const quantityInput = document.createElement('input');
+    quantityInput.type = 'number';
+    quantityInput.name = 'quantity_required';
+    quantityInput.placeholder = 'Quantity Required';
+    quantityInput.step = '0.01';
+    quantityInput.min = '0.01';
+    quantityInput.required = true;
+    quantityInput.style.marginLeft = '1em';
+
+    // Remove button
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.textContent = 'Remove';
+    removeButton.style.marginLeft = '1em';
+    removeButton.addEventListener('click', () => {
+      container.removeChild(row);
+    });
+
+    row.appendChild(select);
+    row.appendChild(quantityInput);
+    row.appendChild(removeButton);
+    container.appendChild(row);
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const ingredients = await fetchIngredients();
+    // Initially add one ingredient row
+    addIngredientRow(ingredients);
+
+    document.getElementById('add-ingredient-button').addEventListener('click', () => {
+      addIngredientRow(ingredients);
+    });
+
+    // Handle Add Menu Item form submission
+    document.getElementById('add-menu-item-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const menuItem = {
+        name: formData.get('name'),
+        description: formData.get('description'),
+        price: parseFloat(formData.get('price')),
+        ingredients: []
+      };
+
+      // Gather ingredients
+      const ingredientRows = document.querySelectorAll('.ingredient-row');
+      for (let row of ingredientRows) {
+        const ingredientId = row.querySelector('select[name="ingredient_id"]').value;
+        const quantity = parseFloat(row.querySelector('input[name="quantity_required"]').value);
+        if (!ingredientId || isNaN(quantity) || quantity <= 0) {
+          alert('Please select a valid ingredient and specify a positive quantity.');
+          return;
+        }
+        menuItem.ingredients.push({
+          ingredient_id: parseInt(ingredientId),
+          quantity_required: quantity
+        });
+      }
+
+      if (menuItem.ingredients.length === 0) {
+        alert('Please add at least one ingredient.');
+        return;
+      }
+
+      // Send data to the server
+      try {
+        const response = await fetch('/api/admin/add-menu-item', {
+          method: 'POST',
+          body: JSON.stringify(menuItem),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await response.text();
+        if (response.ok) {
+          alert(result);
+          e.target.reset();
+          // Clear ingredients
+          document.getElementById('ingredients-container').innerHTML = '';
+          addIngredientRow(ingredients);
+        } else {
+          alert(`Error: ${result}`);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while adding the menu item.');
+      }
+    });
+  });
+</script>
 
 </body>
 </html>

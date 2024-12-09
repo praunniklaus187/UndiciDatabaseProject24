@@ -9,122 +9,85 @@ router.get('/employee/admin', (req, res) => {
     res.send(`
         <!DOCTYPE html>
         <html>
-        <head><title>Employee Page</title></head>
+        <head>
+          <title>Employee Page</title>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              margin: 0;
+              padding: 0;
+              background: #f9f9f9;
+              color: #333;
+            }
+
+            header {
+              background-color: #ff5733;
+              color: white;
+              text-align: center;
+              padding: 1.5rem 0;
+              font-size: 1.8rem;
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .home-button {
+              position: absolute;
+              left: 1rem;
+              background-color: white;
+              color: #ff5733;
+              border: none;
+              padding: 0.5rem 1rem;
+              font-size: 1rem;
+              font-weight: bold;
+              border-radius: 4px;
+              cursor: pointer;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+              transition: background-color 0.3s ease;
+            }
+
+            .home-button:hover {
+              background-color: #ffded6;
+            }
+
+            main {
+              max-width: 800px;
+              margin: 2rem auto;
+              background: white;
+              padding: 2rem;
+              border-radius: 8px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+              color: #ff5733;
+              font-size: 2rem;
+              text-align: center;
+              margin-bottom: 1.5rem;
+            }
+
+            footer {
+              text-align: center;
+              padding: 1rem 0;
+              background: #333;
+              color: white;
+              font-size: 0.9rem;
+              margin-top: 2rem;
+            }
+            
+          </style>
+        </head>
         <body>
+          <header>
+            Undici -Employee Dashboard
+            <button class="home-button" onclick="window.location.href='http://localhost:3000';">Logout</button>
+          </header>
+
+          <main>
             <h1>Employee Page</h1>
             <p><a href="/employee/storage">View Storage</a></p>
             <p><a href="/employee/logout">Logout</a></p>
-        </body>
-        </html>
-    `);
-});
+          </main>
 
-// Employee Storage Overview
-router.get('/employee/storage', (req, res) => {
-    const selectedBranchId = req.query.branch || null; // Get the branch filter from the query parameter
 
-    const baseQuery = `
-        SELECT S.BRANCH_ID, S.INGREDIENT_ID, S.QUANTITY, I.NAME AS INGREDIENT_NAME, I.COST
-        FROM STORAGE S
-        JOIN INGREDIENT I ON S.INGREDIENT_ID = I.INGREDIENT_ID
-        ${selectedBranchId ? 'WHERE S.BRANCH_ID = ?' : ''}
-        ORDER BY S.BRANCH_ID, I.NAME
-    `;
-
-    const queryParams = selectedBranchId ? [selectedBranchId] : [];
-
-    db.query(baseQuery, queryParams, (err, storageItems) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Database query failed.');
-        }
-
-        const branches = {};
-        storageItems.forEach(item => {
-            if (!branches[item.BRANCH_ID]) {
-                branches[item.BRANCH_ID] = [];
-            }
-            branches[item.BRANCH_ID].push(item);
-        });
-
-        db.query('SELECT BRANCH_ID FROM BRANCH', (err, branchRes) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Error fetching branches.');
-            }
-
-            const branchOptions = branchRes.map(branch => `
-                <option value="${branch.BRANCH_ID}" ${branch.BRANCH_ID == selectedBranchId ? 'selected' : ''}>
-                    Branch ${branch.BRANCH_ID}
-                </option>
-            `).join('');
-
-            let html = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                  <meta charset="UTF-8"/>
-                  <title>Employee Storage Overview</title>
-                  <style>
-                    body { font-family: Arial, sans-serif; margin: 2em; }
-                    table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }
-                    th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
-                    th { background: #f0f0f0; }
-                    h2 { margin-top: 2em; }
-                    a { margin-right: 1em; }
-                    form { margin-bottom: 1em; }
-                  </style>
-                </head>
-                <body>
-                  <h1>Employee - All Branches Storage</h1>
-                  <p><a href="/employee/home">Back to Employee Page</a></p>
-
-                  <form method="get" action="/employee/storage">
-                    <label for="branch">Filter by Branch:</label>
-                    <select name="branch" id="branch">
-                      <option value="">All Branches</option>
-                      ${branchOptions}
-                    </select>
-                    <button type="submit">Filter</button>
-                  </form>
-                `;
-
-            if (Object.keys(branches).length === 0) {
-                html += `<p>No storage data available.</p>`;
-            } else {
-                for (const branchId in branches) {
-                    html += `<h2>Branch ${branchId}</h2>`;
-                    html += `
-                        <table>
-                          <tr>
-                            <th>Ingredient ID</th>
-                            <th>Ingredient Name</th>
-                            <th>Quantity</th>
-                            <th>Cost (per unit)</th>
-                          </tr>
-                        `;
-                    for (const item of branches[branchId]) {
-                        html += `
-                            <tr>
-                              <td>${item.INGREDIENT_ID}</td>
-                              <td>${item.INGREDIENT_NAME}</td>
-                              <td>${item.QUANTITY}</td>
-                              <td>${item.COST}</td>
-                            </tr>
-                            `;
-                    }
-                    html += `</table>`;
-                }
-            }
-
-            html += `
-                </body>
-                </html>
-                `;
-
-            res.send(html);
-        });
-    });
-});
-
-module.exports = router;

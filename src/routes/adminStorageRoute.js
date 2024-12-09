@@ -1,24 +1,102 @@
-// src/routes/adminStorageRoutes.js
 const express = require('express');
-const path = require('path');
 const db = require('../db');
 
 const router = express.Router();
 
+// Admin Dashboard Page
 router.get('/employee/admin', (req, res) => {
     res.send(`
         <!DOCTYPE html>
-        <html>
-        <head><title>Admin Page</title></head>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <title>Admin Page</title>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              margin: 0;
+              padding: 0;
+              background: #f9f9f9;
+              color: #333;
+            }
+
+            header {
+              background-color: #ff5733;
+              color: white;
+              padding: 1.5rem 0;
+              font-size: 1.8rem;
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .home-button {
+              position: absolute;
+              left: 1rem;
+              background-color: white;
+              color: #ff5733;
+              border: none;
+              padding: 0.5rem 1rem;
+              font-size: 1rem;
+              font-weight: bold;
+              border-radius: 4px;
+              cursor: pointer;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+              transition: background-color 0.3s ease;
+            }
+
+            .home-button:hover {
+              background-color: #ffded6;
+            }
+
+            main {
+              max-width: 800px;
+              margin: 2rem auto;
+              background: white;
+              padding: 2rem;
+              border-radius: 8px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+              color: #ff5733;
+              font-size: 2rem;
+              text-align: center;
+              margin-bottom: 1.5rem;
+            }
+
+            footer {
+              text-align: center;
+              padding: 1rem 0;
+              background: #333;
+              color: white;
+              font-size: 0.9rem;
+              margin-top: 2rem;
+            }
+          </style>
+        </head>
         <body>
+          <header>
+            Admin Dashboard
+            <button class="home-button" onclick="window.location.href='http://localhost:3000';">Home</button>
+          </header>
+
+          <main>
             <h1>Admin Page</h1>
             <p><a href="/admin/storage">View All Storage</a></p>
             <p><a href="/employee/logout">Logout</a></p>
+          </main>
+
+          <footer>
+            &copy; 2024 Undici. All rights reserved.
+          </footer>
         </body>
         </html>
     `);
 });
 
+// Admin Storage Page
 router.get('/admin/storage', (req, res) => {
     const selectedBranchId = req.query.branch || null; // Get the branch filter from query parameter
 
@@ -52,148 +130,116 @@ router.get('/admin/storage', (req, res) => {
                 return res.status(500).send('Error fetching branches.');
             }
 
-            db.query('SELECT INGREDIENT_ID, NAME, COST FROM INGREDIENT ORDER BY NAME', (err, ingrRes) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send('Error fetching ingredients.');
-                }
+            const branchOptions = branchRes.map(branch => `
+                <option value="${branch.BRANCH_ID}" ${branch.BRANCH_ID == selectedBranchId ? 'selected' : ''}>
+                    Branch ${branch.BRANCH_ID}
+                </option>
+            `).join('');
 
-                const branchOptions = branchRes.map(branch => `
-                    <option value="${branch.BRANCH_ID}" ${branch.BRANCH_ID == selectedBranchId ? 'selected' : ''}>
-                        Branch ${branch.BRANCH_ID}
-                    </option>
-                `).join('');
-
-                let html = `
+            let html = `
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
-                  <meta charset="UTF-8"/>
+                  <meta charset="UTF-8">
                   <title>Admin Storage Overview</title>
                   <style>
-                    body { font-family: Arial, sans-serif; margin: 2em; }
-                    table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }
-                    th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
-                    th { background: #f0f0f0; }
-                    h2 { margin-top: 2em; }
-                    form { margin-top: 2em; }
-                    a { margin-right: 1em; }
+                    body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #f9f9f9; color: #333; }
+                    header { background-color: #ff5733; color: white; padding: 1.5rem 0; font-size: 1.8rem; position: relative; display: flex; align-items: center; justify-content: center; }
+                    .home-button { position: absolute; left: 1rem; background-color: white; color: #ff5733; border: none; padding: 0.5rem 1rem; font-size: 1rem; font-weight: bold; border-radius: 4px; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease; }
+                    .logout-button { position: absolute; right: 1rem; background-color: white; color: #ff5733; border: none; padding: 0.5rem 1rem; font-size: 1rem; font-weight: bold; border-radius: 4px; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease; }
+                    .home-button:hover { background-color: #ffded6; }
+                    .logout-button:hover { background-color: #ffded6; }
+                    main { max-width: 800px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+                    h1 { color: #ff5733; font-size: 2rem; text-align: center; margin-bottom: 1.5rem; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+                    th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+                    th { background-color: #f0f0f0; }
+                    footer { text-align: center; padding: 1rem 0; background: #333; color: white; font-size: 0.9rem; margin-top: 2rem; }
                   </style>
                 </head>
                 <body>
-                  <h1>Admin - All Branches Storage</h1>
-                  <p><a href="/employee/admin">Back to Admin Page</a></p>
+                  <header>
+                    Admin Storage
+                    <button class="home-button" onclick="window.location.href='http://localhost:3000';">Logout</button>
+                    <button class="logout-button" onclick="window.location.href='/employee/admin';">Back to Admin Page</button>
+                  </header>
+                  <main>
+                    <h1>Admin - Storage Overview</h1>
+                    <form method="get" action="/admin/storage">
+                      <label for="branch">Filter by Branch:</label>
+                      <select name="branch" id="branch">
+                        <option value="">All Branches</option>
+                        ${branchOptions}
+                      </select>
+                      <button type="submit">Filter</button>
+                    </form>
+            `;
 
-                  <form method="get" action="/admin/storage">
-                    <label for="branch">Filter by Branch:</label>
-                    <select name="branch" id="branch">
-                      <option value="">All Branches</option>
-                      ${branchOptions}
-                    </select>
-                    <button type="submit">Filter</button>
-                  </form>
-                `;
-
-                if (Object.keys(branches).length === 0) {
-                    html += `<p>No storage data available.</p>`;
-                } else {
-                    for (const branchId in branches) {
-                        html += `<h2>Branch ${branchId}</h2>`;
-                        html += `
+            if (Object.keys(branches).length === 0) {
+                html += `<p>No storage data available.</p>`;
+            } else {
+                for (const branchId in branches) {
+                    html += `<h2>Branch ${branchId}</h2>`;
+                    html += `
                         <table>
                           <tr>
                             <th>Ingredient ID</th>
                             <th>Ingredient Name</th>
                             <th>Quantity</th>
                             <th>Cost (per unit)</th>
+                            <th>Actions</th>
                           </tr>
-                        `;
-                        for (const item of branches[branchId]) {
-                            html += `
+                    `;
+                    branches[branchId].forEach(item => {
+                        html += `
                             <tr>
                               <td>${item.INGREDIENT_ID}</td>
                               <td>${item.INGREDIENT_NAME}</td>
                               <td>${item.QUANTITY}</td>
                               <td>${item.COST}</td>
+                              <td>
+                                <form action="/admin/update-storage" method="POST">
+                                  <input type="hidden" name="branch_id" value="${item.BRANCH_ID}">
+                                  <input type="hidden" name="ingredient_id" value="${item.INGREDIENT_ID}">
+                                  <input type="number" name="quantity" value="${item.QUANTITY}" step="0.01">
+                                  <button type="submit">Update</button>
+                                </form>
+                              </td>
                             </tr>
-                            `;
-                        }
-                        html += `</table>`;
-                    }
+                        `;
+                    });
+                    html += `</table>`;
                 }
+            }
 
-                // Form to order new ingredients
-                html += `
-                <h2>Order New Ingredients</h2>
-                <form action="/admin/order-ingredients" method="POST">
-                  <label for="branch_id">Branch:</label>
-                  <select name="branch_id" id="branch_id">
-                `;
-                branchRes.forEach(b => {
-                    html += `<option value="${b.BRANCH_ID}">Branch ${b.BRANCH_ID}</option>`;
-                });
-                html += `</select><br/><br/>`;
-
-                html += `
-                  <label for="ingredient_id">Ingredient:</label>
-                  <select name="ingredient_id" id="ingredient_id" onchange="updateCost()">
-                `;
-                ingrRes.forEach(i => {
-                    html += `<option value="${i.INGREDIENT_ID}" data-cost="${i.COST}">${i.NAME} (Cost: ${i.COST})</option>`;
-                });
-                html += `</select><br/><br/>`;
-
-                html += `
-                  <label for="quantity">Quantity to order:</label>
-                  <input type="number" step="0.01" name="quantity" id="quantity" value="10" oninput="updateCost()" /><br/><br/>
-                  <div>Total Cost: <span id="total_cost"></span></div><br/>
-                  <button type="submit">Order</button>
-                </form>
-
-                <script>
-                  const ingrSelect = document.getElementById('ingredient_id');
-                  const qtyInput = document.getElementById('quantity');
-                  const totalCostSpan = document.getElementById('total_cost');
-
-                  function updateCost() {
-                    const selectedOption = ingrSelect.options[ingrSelect.selectedIndex];
-                    const cost = parseFloat(selectedOption.getAttribute('data-cost'));
-                    const qty = parseFloat(qtyInput.value) || 0;
-                    const total = cost * qty;
-                    totalCostSpan.innerText = total.toFixed(2);
-                  }
-
-                  updateCost();
-                </script>
+            html += `
+                  </main>
+                  <footer>
+                    &copy; 2024 Undici. All rights reserved.
+                  </footer>
                 </body>
                 </html>
-                `;
+            `;
 
-                res.send(html);
-            });
+            res.send(html);
         });
     });
 });
 
-router.post('/admin/order-ingredients', (req, res) => {
+router.post('/admin/update-storage', (req, res) => {
     const { branch_id, ingredient_id, quantity } = req.body;
 
     if (!branch_id || !ingredient_id || !quantity) {
-        return res.status(400).send('All fields are required (branch, ingredient, quantity).');
+        return res.status(400).send('All fields are required.');
     }
 
-    const qty = parseFloat(quantity);
-    if (isNaN(qty) || qty <= 0) {
-        return res.status(400).send('Quantity must be a positive number.');
-    }
-
-    const updateStorage = `
-        INSERT INTO STORAGE (BRANCH_ID, INGREDIENT_ID, QUANTITY)
-        VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE QUANTITY = QUANTITY + VALUES(QUANTITY)
+    const query = `
+        UPDATE STORAGE
+        SET QUANTITY = ?
+        WHERE BRANCH_ID = ? AND INGREDIENT_ID = ?
     `;
 
-    db.query(updateStorage, [branch_id, ingredient_id, qty], (err) => {
+    db.query(query, [quantity, branch_id, ingredient_id], (err) => {
         if (err) {
             console.error(err);
             return res.status(500).send('Error updating storage.');
@@ -204,3 +250,4 @@ router.post('/admin/order-ingredients', (req, res) => {
 });
 
 module.exports = router;
+
