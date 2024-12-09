@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      margin-bottom: 2em;
+      padding: 1em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    form div {
+      margin-bottom: 1em;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5em;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.5em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #007BFF;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<h1>Admin Dashboard</h1>
+
+<button onclick="location.href = '/admin/storage'">Storage</button>
+
+<!-- Add Employee -->
+<form id="add-employee-form">
+  <h2>Add Employee</h2>
+  <div>
+    <label for="employee-name">Name:</label>
+    <input type="text" id="employee-name" name="name" required>
+  </div>
+  <div>
+    <label for="employee-branch-id">Branch ID:</label>
+    <input type="number" id="employee-branch-id" name="branch_id" required>
+  </div>
+  <div>
+    <label for="employee-salary">Salary:</label>
+    <input type="number" id="employee-salary" name="salary" step="0.01" required>
+  </div>
+  <div>
+    <label for="street_name">Street Name:</label><br>
+    <input type="text" id="street_name" name="street_name" required><br><br>
+  </div>
+  <div>
+    <label for="house_number">House Number:</label><br>
+    <input type="text" id="house_number" name="house_number" required><br><br>
+  </div>
+  <div>
+    <label for="postal_code">Postal Code:</label><br>
+    <input type="text" id="postal_code" name="postal_code" required><br><br>
+  </div>
+  <div>
+    <label for="city">City:</label><br>
+    <input type="text" id="city" name="city" required><br><br>
+  </div>
+  <div>
+    <label for="country">Country:</label><br>
+    <input type="text" id="country" name="country" required><br><br>
+  </div>
+  <div>
+    <label for="employee-password">Password:</label>
+    <input type="password" id="employee-password" name="password" required>
+  </div>
+  <div>
+    <label for="employee-role">Role:</label>
+    <select id="employee-role" name="role" required>
+      <option value="employee">Employee</option>
+      <option value="admin">Admin</option>
+    </select>
+  </div>
+  <button type="submit">Add Employee</button>
+</form>
+
+<!-- Add Branch -->
+<form id="add-branch-form">
+  <h2>Add Branch</h2>
+  <div>
+    <label for="street_name">Street Name:</label><br>
+    <input type="text" id="street_name_branch" name="street_name" required><br><br>
+  </div>
+  <div>
+    <label for="house_number">House Number:</label><br>
+    <input type="text" id="house_number_branch" name="house_number" required><br><br>
+  </div>
+  <div>
+    <label for="postal_code">Postal Code:</label><br>
+    <input type="text" id="postal_code_branch" name="postal_code" required><br><br>
+  </div>
+  <div>
+    <label for="city">City:</label><br>
+    <input type="text" id="city_branch" name="city" required><br><br>
+  </div>
+  <div>
+    <label for="country">Country:</label><br>
+    <input type="text" id="country_branch" name="country" required><br><br>
+  </div>
+  <button type="submit">Add Branch</button>
+</form>
+
+<!-- Add Menu Item -->
+<form id="add-menu-item-form">
+  <h2>Add Menu Item</h2>
+  <div>
+    <label for="menu-item-name">Name:</label>
+    <input type="text" id="menu-item-name" name="name" required>
+  </div>
+  <div>
+    <label for="menu-item-description">Description:</label>
+    <textarea id="menu-item-description" name="description" rows="3" required></textarea>
+  </div>
+  <div>
+    <label for="menu-item-price">Price:</label>
+    <input type="number" id="menu-item-price" name="price" step="0.01" required>
+  </div>
+  <button type="submit">Add Menu Item</button>
+</form>
+
+<!-- Give Promotion -->
+<form id="give-promotion-form">
+  <h2>Give Promotion</h2>
+  <div>
+    <label for="promotion-employee-id">Employee ID:</label>
+    <input type="text" id="promotion-employee-id" name="employee_id" required>
+  </div>
+  <div>
+    <label for="promotion-new-salary">New Salary:</label>
+    <input type="number" id="promotion-new-salary" name="new_salary" step="0.01" required>
+  </div>
+  <button type="submit">Give Promotion</button>
+</form>
+
+<script>
+  // Example event handlers for forms
+  document.getElementById('add-employee-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const response = await fetch('/api/admin/add-employee', {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(data)),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    alert(await response.text());
+  });
+
+  document.getElementById('add-branch-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const response = await fetch('/api/admin/add-branch', {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(data)),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    alert(await response.text());
+  });
+
+  document.getElementById('add-menu-item-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const response = await fetch('/api/admin/add-menu-item', {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(data)),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    alert(await response.text());
+  });
+
+  document.getElementById('give-promotion-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const response = await fetch('/api/admin/give-promotion', {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(data)),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    alert(await response.text());
+  });
+</script>
+</body>
+</html>

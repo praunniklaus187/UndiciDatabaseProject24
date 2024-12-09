@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pizza Shop - Order</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<h1>Place an Order</h1>
+<form id="orderForm" action="/order" method="POST">
+  <label for="customer_id">Customer ID:</label><br>
+  <input type="text" id="customer_id" name="customer_id" required><br><br>
+
+  <label for="branch_id">Branch ID:</label><br>
+  <input type="number" id="branch_id" name="branch_id" required><br><br>
+
+  <h3>Select Pizzas:</h3>
+  <div id="productList"></div>
+
+  <input type="submit" value="Place Order">
+</form>
+
+<script>
+  fetch('/products')
+          .then(response => response.json())
+          .then(products => {
+            console.log('Products fetched:', products); // Log the products to verify data
+            const productList = document.getElementById('productList');
+            products.forEach(product => {
+              const div = document.createElement('div');
+              div.innerHTML = `
+                <input type="checkbox" id="product_${product.PRODUCT_ID}" name="products" value="${product.PRODUCT_ID}">
+                <label for="product_${product.PRODUCT_ID}">
+                    ${product.NAME} - $${product.PRICE}<br>
+                    ${product.DESCRIPTION}
+                </label><br>
+                Quantity: <input type="number" name="quantity_${product.PRODUCT_ID}" min="1" value="1"><br><br>
+            `;
+              productList.appendChild(div);
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching products:', error);
+          });
+
+
+  // Handle form submission
+  document.getElementById('orderForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+
+    const customer_id = formData.get('customer_id');
+    const branch_id = formData.get('branch_id');
+    const products = [];
+
+    formData.getAll('products').forEach(product_id => {
+      const quantity = formData.get(`quantity_${product_id}`) || 1;
+      products.push({ product_id: parseInt(product_id), quantity: parseInt(quantity) });
+    });
+
+    if (products.length === 0) {
+      alert('Please select at least one product.');
+      return;
+    }
+
+    // Send order data to the server
+    fetch('/order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ customer_id, branch_id, products }),
+    })
+            .then(response => response.text())
+            .then(message => {
+              alert(message);
+              window.location.href = '/';
+            })
+            .catch(error => {
+              console.error('Error placing order:', error);
+              alert('Failed to place order.');
+            });
+  });
+</script>
+</body>
+</html>

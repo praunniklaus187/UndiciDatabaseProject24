@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html lang="en">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Pizza Shop Database</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<h1>Pizza Shop Database</h1>
+<p>Select a table to view its data:</p>
+
+<!-- Buttons for each table -->
+<button onclick="fetchTable('POSTAL_CODE')">Postal Codes</button>
+<button onclick="fetchTable('ADDRESS')">Addresses</button>
+<button onclick="fetchTable('BRANCH')">Branches</button>
+<button onclick="fetchTable('CUSTOMER')">Customers</button>
+<button onclick="fetchTable('EMPLOYEE')">Employees</button>
+<button onclick="fetchTable('PRODUCT')">Products</button>
+<button onclick="fetchTable('INGREDIENT')">Ingredients</button>
+<button onclick="fetchTable('STORAGE')">Storage</button>
+<button onclick="fetchTable('ORDER')">Orders</button>
+<button onclick="fetchTable('ORDER_ITEM')">Order Items</button>
+<button onclick="fetchTable('ORDER_ITEM_PRICE')">Order Item Prices</button>
+
+<!-- Table to display results -->
+<div id="table-container">
+  <table id="data-table">
+    <thead>
+    <tr id="table-head"></tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+
+<script>
+  async function fetchTable(tableName) {
+    // Clear previous table data
+    document.getElementById('table-head').innerHTML = '';
+    document.getElementById('table-body').innerHTML = '';
+
+    try {
+      // Fetch table data from the server
+      const response = await fetch(`/table/${tableName}`);
+      const data = await response.json();
+
+      if (data.length === 0) {
+        alert('No data available in this table.');
+        return;
+      }
+
+      // Populate table headers
+      const tableHead = document.getElementById('table-head');
+      Object.keys(data[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        tableHead.appendChild(th);
+      });
+
+      // Populate table rows
+      const tableBody = document.getElementById('table-body');
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        Object.values(row).forEach(value => {
+          const td = document.createElement('td');
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+      });
+    } catch (error) {
+      console.error('Error fetching table:', error);
+      alert('Failed to fetch table data. Check console for details.');
+    }
+  }
+</script>
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>
