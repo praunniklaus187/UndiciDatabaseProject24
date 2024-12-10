@@ -55,6 +55,8 @@ DELIMITER ;
 CREATE TABLE EMPLOYEE (
                           EMPLOYEE_ID VARCHAR(50) PRIMARY KEY,
                           NAME VARCHAR(255),
+                          PASSWORD VARCHAR(255),
+                          ROLE VARCHAR(50),
                           BRANCH_ID INT,
                           SALARY DECIMAL(10,2),
                           ADDRESS_ID INT,
@@ -161,9 +163,10 @@ INSERT INTO CUSTOMER (NAME, ADDRESS_ID) VALUES
                                             ('Jane Smith', 2);
 
 -- Insert employees without specifying EMPLOYEE_ID, trigger will handle it
-INSERT INTO EMPLOYEE (NAME, BRANCH_ID, SALARY, ADDRESS_ID) VALUES
-                                                               ('Alice Johnson', 1, 50000.00, 1),
-                                                               ('Bob Williams', 2, 55000.00, 2);
+
+INSERT INTO EMPLOYEE (NAME, BRANCH_ID, SALARY, ADDRESS_ID, PASSWORD, ROLE) VALUES
+                                                               ('Alice Johnson', 1, 50000.00, 1, 'secret123', 'admin' ),
+                                                               ('Bob Williams', 2, 55000.00, 2, 'secret123', 'employee');
 
 INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE) VALUES
                                                    ('Cheese Pizza', 'Classic cheese pizza', 10.99),
@@ -248,10 +251,5 @@ INSERT INTO ORDER_ITEM_PRICE (ORDER_ID, PRODUCT_ID, PRICE) VALUES
                                                                (1, 1, 10.99),
                                                                (2, 2, 12.99);
 
-ALTER TABLE EMPLOYEE
-    ADD PASSWORD VARCHAR(255),
-    ADD ROLE VARCHAR(50);
 
 
-UPDATE EMPLOYEE SET PASSWORD='secret123', ROLE='admin' WHERE EMPLOYEE_ID='EMP001';
-UPDATE EMPLOYEE SET PASSWORD='pass456', ROLE='employee' WHERE EMPLOYEE_ID='EMP002';
