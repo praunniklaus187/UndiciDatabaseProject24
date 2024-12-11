@@ -13,6 +13,8 @@ router.get('/employee', (req, res) => {
 // Handle employee login
 router.post('/employee/login', (req, res) => {
     const { employee_id, password } = req.body;
+    console.log(password);
+    console.log(employee_id);
 
     if (!employee_id || !password) {
         return res.status(400).send('Please provide both Employee ID and password.');

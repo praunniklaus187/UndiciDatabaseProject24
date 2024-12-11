@@ -1,20 +1,12 @@
 // src/db.js
 const mysql = require('mysql2');
 
-const db = mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'my_database',
-});
+const pool = mysql
+    .createPool({
+        host: process.env.DB_HOST || '127.0.0.1', // Use environment variables
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASS || '',
+        database: process.env.DB_NAME || 'my_database',
+    }).promise();
 
-db.connect((err) => {
-    if (err) {
-        console.error('Database connection failed:', err);
-        process.exit(1);
-    }
-    console.log('Connected to the database!');
-});
-
-
-module.exports = db;
+module.exports = pool;

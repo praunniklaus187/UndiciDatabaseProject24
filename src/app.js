@@ -14,16 +14,18 @@ const employeeLoginRoutes = require('./routes/employeeLoginRoutes');
 const employeeDashboardRoutes = require('./routes/employeeDashboardRoutes');
 const adminStorageRoute = require('./routes/adminStorageRoute');
 const employeeStorageRoute = require('./routes/employeeStorageRoute');
+const employeeRoutes = require('./routes/employeeRoutes');
+
 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'views')));
-
+app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use(customerRoutes);
 app.use(orderRoutes);
@@ -33,12 +35,20 @@ app.use(employeeLoginRoutes);
 app.use(employeeDashboardRoutes);
 app.use(adminStorageRoute);
 app.use(employeeStorageRoute);
+app.use(employeeRoutes);
 
 // Root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'root.html'));
 });
 
+app.get('/employee', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'employee.html'));
+});
+
+app.get('/order', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'order.html'));
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
