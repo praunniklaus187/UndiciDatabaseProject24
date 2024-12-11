@@ -3,122 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Employee Login</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #333;
-    }
-
-    header {
-      background-color: #ff5733;
-      color: white;
-      text-align: center;
-      padding: 1.5rem 0;
-      font-size: 1.8rem;
-      position: relative;
-    }
-
-    .home-button {
-      position: absolute;
-      left: 1rem;
-      background-color: white;
-      color: #ff5733;
-      border: none;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      transition: background-color 0.3s ease;
-    }
-
-    .home-button:hover {
-      background-color: #ffded6;
-    }
-
-    main {
-      max-width: 600px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      color: #ff5733;
-      font-size: 2rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-
-    button[type="submit"] {
-      background-color: #ff5733;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      width: 100%;
-    }
-
-    button[type="submit"]:hover {
-      background-color: #e34f2c;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem 0;
-      background: #333;
-      color: white;
-      font-size: 0.9rem;
-      margin-top: 2rem;
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 1.8rem;
-      }
-
-      button {
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-      }
-
-      .home-button {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.8rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="employee.css">
 </head>
 <body>
 
 <header>
   Undici - Employee Login
-  <button class="home-button" onclick="window.location.href='http://localhost:3000';">Home</button>
+  <button class="home-button" onclick="navigateToHome();">Home</button>
 </header>
 
 <main>
@@ -138,6 +29,6 @@
   &copy; 2024 Undici. All rights reserved.
 </footer>
 
+<script src="employee.js"></script>
 </body>
 </html>
-

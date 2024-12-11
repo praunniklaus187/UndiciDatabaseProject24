@@ -4,130 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Undici - Sign Up</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #333;
-    }
-
-    header {
-      background-color: #ff5733;
-      color: white;
-      text-align: center;
-      padding: 1.5rem 0;
-      font-size: 1.8rem;
-      position: relative;
-    }
-
-    .home-button {
-      position: absolute;
-      top: 50%;
-      left: 1rem;
-      transform: translateY(-50%);
-      background-color: white;
-      color: #ff5733;
-      border: none;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      transition: background-color 0.3s ease;
-    }
-
-    .home-button:hover {
-      background-color: #ffded6;
-    }
-
-    main {
-      max-width: 600px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      color: #ff5733;
-      font-size: 2rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    h3 {
-      color: #555;
-      margin-top: 2rem;
-      font-size: 1.3rem;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-
-    input[type="submit"] {
-      background-color: #ff5733;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      width: 100%;
-    }
-
-    input[type="submit"]:hover {
-      background-color: #e34f2c;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem 0;
-      background: #333;
-      color: white;
-      font-size: 0.9rem;
-      margin-top: 2rem;
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 1.8rem;
-      }
-
-      input[type="submit"] {
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-      }
-
-      .home-button {
-        font-size: 0.9rem;
-        padding: 0.4rem 0.8rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="signup.css">
 </head>
 <body>
-
 <header>
   Undici - Sign Up
-  <button class="home-button" onclick="window.location.href='http://localhost:3000';">Home</button>
-
+  <button class="home-button" onclick="navigateToHome();">Home</button>
 </header>
 
 <main>
@@ -161,6 +43,6 @@
   &copy; 2024 Undici. All rights reserved.
 </footer>
 
+<script src="employee.js"></script>
 </body>
 </html>
-

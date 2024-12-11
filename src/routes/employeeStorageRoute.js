@@ -80,7 +80,7 @@ router.get('/employee/admin', (req, res) => {
         </head>
         <body>
           <header>
-            Undici -Employee Dashboard
+            Undici - Employee Dashboard
             <button class="home-button" onclick="window.location.href='http://localhost:3000';">Logout</button>
           </header>
 
@@ -90,4 +90,12 @@ router.get('/employee/admin', (req, res) => {
             <p><a href="/employee/logout">Logout</a></p>
           </main>
 
+          <footer>
+            &copy; ${new Date().getFullYear()} Undici. All rights reserved.
+          </footer>
+        </body>
+        </html>
+    `);
+});
 
+module.exports = router;
