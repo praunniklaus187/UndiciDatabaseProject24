@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Undici - Place an Order</title>
-  <link rel="stylesheet" href="order.css">
+  <link rel="stylesheet" href="global.css">
 </head>
 <body>
 
@@ -18,18 +18,29 @@
 <main>
   <h1>Place an Order</h1>
   <form id="orderForm">
-    <label for="customer_id">Customer ID:</label>
-    <input type="text" id="customer_id" name="customer_id" placeholder="Enter your Customer ID" required>
+    <!-- Customer Information Section -->
+    <section class="form-section">
+      <label for="customer_id">Customer ID:</label>
+      <input type="text" id="customer_id" name="customer_id" placeholder="Enter your Customer ID" required>
 
-    <label for="branch_id">Branch ID:</label>
-    <input type="number" id="branch_id" name="branch_id" placeholder="Enter the Branch ID" required>
+      <label for="branch_id">Branch ID:</label>
+      <input type="number" id="branch_id" name="branch_id" placeholder="Enter the Branch ID" required>
+    </section>
 
-    <h2 class="products-heading">Select Pizzas</h2>
-    <div id="productList" class="products">
-      <!-- Product list will be dynamically populated here -->
-    </div>
+    <!-- Pizza Selection Section -->
+    <section class="menu-section">
+      <h2 class="products-heading">Select Pizzas</h2>
+      <div id="productList" class="products">
+        <!-- Example Pizza Items -->
 
-    <input type="submit" value="Place Order">
+        <!-- Add more pizzas dynamically in JavaScript -->
+      </div>
+    </section>
+
+    <!-- Submit Button -->
+    <section class="form-section">
+      <input type="submit" value="Place Order">
+    </section>
   </form>
 </main>
 
