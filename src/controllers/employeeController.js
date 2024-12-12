@@ -1,4 +1,5 @@
 const employeeModel = require('../models/employeeModel');
+const path = require("path");
 
 module.exports = {
     async handleLogin(req, res) {
@@ -13,16 +14,22 @@ module.exports = {
 
         try {
             const employee = await employeeModel.getEmployeeById(employee_id);
+            console.log(employee)
 
             if (!employee || employee.PASSWORD !== password) {
                 return res.status(401).send('Invalid Employee ID or Password.');
             }
 
+            console.log("You are before the redirection")
+            console.log(employee.ROLE);
+
             if (employee.ROLE === 'admin') {
                 return res.redirect('/employee/admin');
             } else {
+                console.log("You're being redirected to the employee home page")
                 return res.redirect('/employee/home');
             }
+            console.log("You are after the redirection")
         } catch (err) {
             console.error(err);
             res.status(500).send('Error processing login.');
@@ -32,9 +39,10 @@ module.exports = {
     async showDashboard(req, res) {
         try {
             const orders = await employeeModel.getUnfinishedOrders();
-            res.render('employeeDashboard', { orders });
+            console.log("Got unfinished orders:", orders);
+            res.json(orders); // Return JSON for the frontend
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching dashboard data:', err);
             res.status(500).send('Error fetching dashboard data.');
         }
     },
@@ -54,4 +62,5 @@ module.exports = {
             res.status(500).send('Error handling the order.');
         }
     }
+
 };

@@ -3,12 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevent the default form submission behavior
-        console.log("YOU'RE HERE!!")
+        console.log("Form submission intercepted!");
 
         const employeeId = document.getElementById('employee_id').value.trim();
         const password = document.getElementById('password').value.trim();
-        console.log(password);
-        console.log(employeeId);
+        console.log("Employee ID:", employeeId);
+        console.log("Password:", password);
 
         if (!employeeId || !password) {
             alert('Please fill in both Employee ID and Password.');
@@ -22,12 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ employee_id: employeeId, password: password }),
             });
-            console.log(response);
 
-            if (response.ok) {
-                // Redirect based on the server's response
-                const redirectPath = await response.text();
-                window.location.href = redirectPath;
+            console.log("Response:", response);
+
+            if (response.redirected) {
+                // If the server issues a redirect, follow it
+                console.log("Redirecting to:", response.url);
+                window.location.href = response.url;
+            } else if (response.ok) {
+                // Handle non-redirect successful responses (if any)
+                console.log("Response OK:", await response.text());
             } else if (response.status === 401) {
                 alert('Invalid Employee ID or Password.');
             } else {

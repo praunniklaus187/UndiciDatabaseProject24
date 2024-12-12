@@ -11,8 +11,8 @@ module.exports = {
         try {
             await adminModel.insertEmployee({ name, branch_id, salary, street_name, house_number, postal_code, city, country, password, role });
             res.send('Employee added successfully.');
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error('Error adding employee:', error);
             res.status(500).send('Error adding employee.');
         }
     },
@@ -27,8 +27,8 @@ module.exports = {
         try {
             await adminModel.insertBranch({ street_name, house_number, postal_code, city, country });
             res.send('Branch added successfully.');
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error('Error adding branch:', error);
             res.status(500).send('Error adding branch.');
         }
     },
@@ -43,8 +43,8 @@ module.exports = {
         try {
             await adminModel.insertMenuItem({ name, description, price, ingredients });
             res.send('Menu item and ingredients added successfully.');
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error('Error adding menu item:', error);
             res.status(500).send('Error adding menu item.');
         }
     },
@@ -52,9 +52,9 @@ module.exports = {
     async getIngredients(req, res) {
         try {
             const ingredients = await adminModel.getAllIngredients();
-            res.json(ingredients);
-        } catch (err) {
-            console.error(err);
+            res.json({ data: ingredients });
+        } catch (error) {
+            console.error('Error fetching ingredients:', error);
             res.status(500).json({ error: 'Error fetching ingredients.' });
         }
     },
@@ -69,9 +69,9 @@ module.exports = {
         try {
             await adminModel.updateEmployeeSalary(employee_id, new_salary);
             res.send('Promotion applied successfully.');
-        } catch (err) {
-            console.error(err);
-            res.status(500).send('Error updating employee salary.');
+        } catch (error) {
+            console.error('Error applying promotion:', error);
+            res.status(500).send('Error applying promotion.');
         }
     }
 };

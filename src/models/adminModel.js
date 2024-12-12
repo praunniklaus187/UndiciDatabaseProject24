@@ -26,9 +26,9 @@ module.exports = {
             await connection.query(employeeQuery, [name, branch_id, salary, address_id, password, role]);
 
             await connection.commit();
-        } catch (err) {
+        } catch (error) {
             await connection.rollback();
-            throw err;
+            throw error;
         } finally {
             connection.release();
         }
@@ -59,9 +59,9 @@ module.exports = {
             await connection.query(branchQuery, [address_id]);
 
             await connection.commit();
-        } catch (err) {
+        } catch (error) {
             await connection.rollback();
-            throw err;
+            throw error;
         } finally {
             connection.release();
         }
@@ -90,9 +90,9 @@ module.exports = {
             await Promise.all(ingredientQueries);
 
             await connection.commit();
-        } catch (err) {
+        } catch (error) {
             await connection.rollback();
-            throw err;
+            throw error;
         } finally {
             connection.release();
         }

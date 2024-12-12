@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Dashboard</title>
+  <link rel="stylesheet" href="/css/global.css">
+</head>
+<body>
+<header>
+  <button class="home-button" onclick="navigateToHome()">Home</button>
+  <div>Employee Dashboard</div>
+  <button class="home-button" onclick="navigateToStorage()">Storage</button>
+</header>
+<main>
+  <h1>Unfinished Orders</h1>
+  <div id="orders-container"></div>
+</main>
+<footer>
+  &copy; 2024 Undici. All rights reserved.
+</footer>
+
+<script>
+  // Navigate to the home page
+  function navigateToHome() {
+    window.location.href = '/';
+  }
+
+  // Navigate to the storage page
+  function navigateToStorage() {
+    window.location.href = '/employee/storage';
+  }
+
+  // Fetch and render unfinished orders
+  async function loadUnfinishedOrders() {
+    try {
+      const response = await fetch('/api/employee/orders');
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+      }
+      const orders = await response.json();
+      const container = document.getElementById('orders-container');
+
+      if (orders.length === 0) {
+        container.innerHTML = `<p>No unfinished orders at the moment.</p>`;
+        return;
+      }
+
+      const table = document.createElement('table');
+      table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer Name</th>
+              <th>Branch ID</th>
+              <th>Status</th>
+              <th>Order Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orders.map(order => `
+              <tr>
+                <td>${order.ORDER_ID}</td>
+                <td>${order.CUSTOMER_NAME}</td>
+                <td>${order.BRANCH_ID}</td>
+                <td>${order.STATUS}</td>
+                <td>${new Date(order.ORDER_DATE).toLocaleString()}</td>
+                <td>
+                  <form action="/employee/handle-order" method="POST">
+                    <input type="hidden" name="order_id" value="${order.ORDER_ID}">
+                    <button type="submit">Complete Order</button>
+                  </form>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
+      container.appendChild(table);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+      document.getElementById('orders-container').innerHTML = `<p>Error loading orders. Please try again later.</p>`;
+    }
+  }
+
+  // Load orders on page load
+  document.addEventListener('DOMContentLoaded', loadUnfinishedOrders);
+</script>
+</body>
+</html>

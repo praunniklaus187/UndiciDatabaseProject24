@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Storage Overview</title>
+  <link rel="stylesheet" href="/css/global.css">
+</head>
+<body>
+<header>
+  <button class="home-button" id="navigate-home">Home</button>
+  <h1>Employee Storage Overview</h1>
+</header>
+<main>
+  <!-- Branch Filter -->
+  <form id="branch-filter-form">
+    <label for="branch-filter">Filter by Branch:</label>
+    <select id="branch-filter">
+      <option value="">All Branches</option>
+    </select>
+    <button type="submit">Filter</button>
+  </form>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Branch ID</th>
+      <th>Ingredient ID</th>
+      <th>Ingredient Name</th>
+      <th>Quantity</th>
+      <th>Cost</th>
+    </tr>
+    </thead>
+    <tbody id="storage-table-body">
+    <!-- Dynamic rows will be appended here -->
+    </tbody>
+  </table>
+  <p id="no-data-message" style="display: none; text-align: center;">No storage data available.</p>
+</main>
+<footer>
+  &copy; 2024 Undici. All rights reserved.
+</footer>
+<script src="/js/storage.js"></script>
+</body>
+</html>

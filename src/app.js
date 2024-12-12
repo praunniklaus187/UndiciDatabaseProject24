@@ -10,7 +10,6 @@ const customerRoutes = require('./routes/customerRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const productsRoutes = require('./routes/productsRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-const employeeLoginRoutes = require('./routes/employeeLoginRoutes');
 const employeeDashboardRoutes = require('./routes/employeeDashboardRoutes');
 const adminStorageRoute = require('./routes/adminStorageRoute');
 const employeeStorageRoute = require('./routes/employeeStorageRoute');
@@ -21,6 +20,10 @@ const employeeRoutes = require('./routes/employeeRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -31,7 +34,6 @@ app.use(customerRoutes);
 app.use(orderRoutes);
 app.use(productsRoutes);
 app.use(adminRoutes);
-app.use(employeeLoginRoutes);
 app.use(employeeDashboardRoutes);
 app.use(adminStorageRoute);
 app.use(employeeStorageRoute);
@@ -49,6 +51,18 @@ app.get('/employee', (req, res) => {
 app.get('/order', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'order.html'));
 });
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'signup.html'));
+});
+app.get('employee/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'admin.html'));
+});
+
+app.get('employee/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'employeeDashboard.html'));
+});
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
