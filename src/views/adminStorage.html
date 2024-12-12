@@ -8,12 +8,10 @@
 </head>
 <body>
 <header>
-  Storage Overview
+  <h1>Storage Overview</h1>
   <button class="home-button" onclick="navigateToAdmin()">Back to Admin</button>
 </header>
 <main>
-  <h1>Storage Overview</h1>
-
   <!-- Filter by Branch -->
   <form id="filter-form">
     <label for="branch">Filter by Branch:</label>
@@ -34,13 +32,23 @@
       <th>Actions</th>
     </tr>
     </thead>
-    <tbody id="storage-container"></tbody>
+    <tbody id="storage-container">
+    <!-- Storage data rows will be dynamically injected here -->
+    </tbody>
   </table>
-
 </main>
 <footer>
   &copy; 2024 Undici. All rights reserved.
 </footer>
+
+<script>
+  /**
+   * Navigate back to the admin dashboard
+   */
+  function navigateToAdmin() {
+    window.location.href = '/employee/admin';
+  }
+</script>
 <script src="/js/adminStorage.js"></script>
 </body>
 </html>

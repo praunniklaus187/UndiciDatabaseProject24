@@ -36,25 +36,30 @@ module.exports = {
 
     // Fetch storage data filtered by branch ID (Similar to getStorageDetails)
     async getStorageData(req, res) {
-    try {
-        const storageData = await storageModel.getStorageDetails();
-        if (!storageData || storageData.length === 0) {
-            return res.status(200).json({ message: 'No storage data available.', data: [] });
+        try {
+            const storageData = await this.getStorageDetails(); // Use correct method reference
+            if (!storageData || storageData.length === 0) {
+                return res.status(200).json({ message: 'No storage data available.', data: [] });
+            }
+            res.status(200).json({ data: storageData });
+        } catch (err) {
+            console.error('Error fetching storage details:', err);
+            res.status(500).json({ error: 'Error fetching storage data.' });
         }
-        res.status(200).json({ data: storageData });
-    } catch (err) {
-        console.error('Error fetching storage details:', err);
-        res.status(500).json({ error: 'Error fetching storage data.' });
-    }
-},
+    },
 
     // Update storage quantity
-    async updateStorage(branchId, ingredientId, quantity) {
+    async updateStorage(quantity, branchId, ingredientId) {
+        console.log(quantity);
+        console.log(branchId);
+        console.log(ingredientId);
         const query = `
             UPDATE STORAGE
             SET QUANTITY = ?
-            WHERE BRANCH_ID = ? AND INGREDIENT_ID = ?
+            WHERE BRANCH_ID = ?
+              AND INGREDIENT_ID = ?
         `;
+        console.log(query);
         await db.query(query, [quantity, branchId, ingredientId]);
     },
 
@@ -73,5 +78,5 @@ module.exports = {
         const query = `SELECT INGREDIENT_ID, NAME, COST FROM INGREDIENT ORDER BY NAME`;
         const [results] = await db.query(query);
         return results;
-    },
+    }
 };

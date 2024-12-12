@@ -16,4 +16,5 @@ router.post('/api/admin/add-menu-item', adminController.addMenuItem);
 router.get('/api/admin/get-ingredients', adminController.getIngredients);
 router.post('/api/admin/give-promotion', adminController.givePromotion);
 
+
 module.exports = router;

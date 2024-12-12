@@ -116,6 +116,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    document.addEventListener('DOMContentLoaded', async () => {
+        const giveSalaryForm = document.getElementById('give-salary-form');
+
+        // Submit Give Salary Form
+        giveSalaryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(giveSalaryForm);
+            const salaryData = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/admin/give-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(salaryData),
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Salary disbursed successfully!');
+                if (response.ok) giveSalaryForm.reset();
+            } catch (error) {
+                console.error('Error disbursing salary:', error);
+                alert('Failed to disburse salary. Please try again.');
+            }
+        });
+    });
+
     // Add Initial Ingredient Row
     const ingredients = await fetchIngredients();
     addIngredientRow(ingredients);

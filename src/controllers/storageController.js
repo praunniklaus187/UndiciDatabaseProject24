@@ -38,32 +38,62 @@ module.exports = {
         try {
             const branchId = req.query.branch || null; // Retrieve branch query param
             const storageData = branchId
-                ? await storageModel.getStorageData(branchId) // Filtered data
+                ? await storageModel.getStorageDetails(branchId) // Correct function call
                 : await storageModel.getAllStorage(); // All data
 
-            res.status(200).json({ data: storageData }); // Return JSON response
+            if (!storageData || storageData.length === 0) {
+                return res.status(200).json({ message: 'No storage data available.', data: [] });
+            }
+
+            res.status(200).json({ data: storageData });
         } catch (err) {
             console.error('Error fetching filtered storage data:', err);
             res.status(500).json({ error: 'Error fetching storage data.' });
         }
     },
 
-    // Update storage data
-    async updateStorage(req, res) {
-        const { branch_id, ingredient_id, quantity } = req.body;
 
-        if (!branch_id || !ingredient_id || !quantity) {
+    async updateStorage(req, res) {
+        const { adjustment, branch_id, ingredient_id } = req.body;
+
+        if (!branch_id || !ingredient_id || adjustment === undefined) {
             return res.status(400).json({ error: 'All fields are required.' });
         }
 
+        const adjustmentValue = parseFloat(adjustment);
+        if (isNaN(adjustmentValue)) {
+            return res.status(400).json({ error: 'Invalid adjustment value.' });
+        }
+
         try {
-            await storageModel.updateStorage(branch_id, ingredient_id, quantity);
+            // Fetch the current quantity from the database
+            const currentData = await storageModel.getStorageDetails(branch_id);
+            const currentQuantity = currentData.find(item => item.INGREDIENT_ID === parseInt(ingredient_id))?.QUANTITY;
+
+            if (currentQuantity === undefined) {
+                return res.status(404).json({ error: 'Ingredient not found in storage.' });
+            }
+
+            console.log(adjustmentValue);
+            console.log(currentQuantity)
+            // Calculate the new quantity
+            const newQuantity = Number(currentQuantity) + Number(adjustmentValue);
+
+
+            if (newQuantity < 0) {
+                return res.status(400).json({ error: 'Quantity cannot be negative.' });
+            }
+
+            // Update the storage quantity
+            await storageModel.updateStorage(newQuantity,branch_id, ingredient_id);
+
             res.status(200).json({ message: 'Storage updated successfully!' });
         } catch (err) {
-            console.error('Error updating storage:', err);
-            res.status(500).json({ error: 'Error updating storage.' });
+            await storageModel.getStorageDetails(branchId);
         }
     },
+
+
     async viewStorage(req, res) {
         try {
             const storageData = await storageModel.getAllStorage();

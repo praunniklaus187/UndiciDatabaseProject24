@@ -120,7 +120,29 @@
     <button type="button" id="add-ingredient-button">Add Ingredient</button>
     <button type="submit">Add Menu Item</button>
   </form>
+
+  <!-- Give Salary Form -->
+  <form id="give-salary-form">
+    <h2>Give Salary</h2>
+    <div>
+      <label for="salary-employee-id">Employee ID:</label>
+      <input
+              type="text"
+              id="salary-employee-id"
+              name="employee_id"
+              pattern="EMP[0-9]{3}"
+              title="Employee ID must be in the format EMP followed by 3 digits (e.g., EMP001)"
+              required>
+    </div>
+    <div>
+      <label for="salary-amount">Amount:</label>
+      <input type="number" id="salary-amount" name="amount" step="0.01" required>
+    </div>
+    <button type="submit">Pay Salary</button>
+  </form>
+
 </main>
+
 
 <footer>
   &copy; 2024 Undici. All rights reserved.
