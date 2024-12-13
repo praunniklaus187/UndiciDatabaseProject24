@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navigate back to home page
     navigateHomeButton.addEventListener('click', () => {
-        window.location.href = '/employee/admin';
+        window.location.href = '/employee/home';
     });
 
     // Initialize
