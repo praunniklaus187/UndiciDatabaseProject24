@@ -1,3 +1,5 @@
+// src/controllers/adminController.js
+
 const adminModel = require('../models/adminModel');
 
 module.exports = {
@@ -68,7 +70,8 @@ module.exports = {
 
         try {
             await adminModel.updateEmployeeSalary(employee_id, new_salary);
-            res.send('Promotion applied successfully.');
+            // Changed from res.send() to res.json()
+            res.json({ message: 'Promotion applied successfully.' });
         } catch (error) {
             console.error('Error applying promotion:', error);
             res.status(500).send('Error applying promotion.');

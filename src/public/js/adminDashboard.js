@@ -1,9 +1,12 @@
+// src/public/js/adminDashboard.js
+
 document.addEventListener('DOMContentLoaded', async () => {
     const addEmployeeForm = document.getElementById('add-employee-form');
     const addBranchForm = document.getElementById('add-branch-form');
     const addMenuItemForm = document.getElementById('add-menu-item-form');
     const ingredientsContainer = document.getElementById('ingredients-container');
     const addIngredientButton = document.getElementById('add-ingredient-button');
+    const giveSalaryForm = document.getElementById('give-promotion-form');
 
     // Fetch Ingredients for Menu Item
     async function fetchIngredients() {
@@ -17,18 +20,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         const row = document.createElement('div');
         row.className = 'ingredient-row';
         row.innerHTML = `
-      <select name="ingredient_id" required>
-        <option value="">-- Select Ingredient --</option>
-        ${ingredients
+            <select name="ingredient_id" required>
+                <option value="">-- Select Ingredient --</option>
+                ${ingredients
             .map(
                 (ingredient) =>
                     `<option value="${ingredient.INGREDIENT_ID}">${ingredient.NAME}</option>`
             )
             .join('')}
-      </select>
-      <input type="number" name="quantity_required" placeholder="Quantity" step="0.01" required>
-      <button type="button" class="remove-ingredient-button">Remove</button>
-    `;
+            </select>
+            <input type="number" name="quantity_required" placeholder="Quantity" step="0.01" required>
+            <button type="button" class="remove-ingredient-button">Remove</button>
+        `;
         ingredientsContainer.appendChild(row);
 
         // Remove Ingredient Row
@@ -116,30 +119,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        const giveSalaryForm = document.getElementById('give-promotion-form');
+    // Submit Give Salary Form
+    giveSalaryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(giveSalaryForm);
+        const salaryData = Object.fromEntries(formData.entries());
 
-        // Submit Give Salary Form
-        giveSalaryForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(giveSalaryForm);
-            const salaryData = Object.fromEntries(formData.entries());
+        try {
+            const response = await fetch('/api/admin/give-promotion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(salaryData),
+            });
 
-            try {
-                const response = await fetch('/api/admin/give-promotion', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(salaryData),
-                });
-
-                const result = await response.json();
-                alert(result.message || 'Promotion applied successfully!');
-                if (response.ok) giveSalaryForm.reset();
-            } catch (error) {
-                console.error('Error applyingpromotion:', error);
-                alert('Failed to disburse salary. Please try again.');
-            }
-        });
+            const result = await response.json();
+            alert(result.message || 'Promotion applied successfully!');
+            if (response.ok) giveSalaryForm.reset();
+        } catch (error) {
+            console.error('Error applying promotion:', error);
+            alert('Failed to disburse salary. Please try again.');
+        }
     });
 
     // Add Initial Ingredient Row
