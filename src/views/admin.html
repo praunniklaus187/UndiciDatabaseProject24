@@ -122,24 +122,25 @@
   </form>
 
   <!-- Give Salary Form -->
-  <form id="give-salary-form">
-    <h2>Give Salary</h2>
+  <form id="give-promotion-form">
+    <h2>Give Promotion</h2>
     <div>
-      <label for="salary-employee-id">Employee ID:</label>
+      <label for="promotion-employee-id">Employee ID:</label>
       <input
               type="text"
-              id="salary-employee-id"
+              id="promotion-employee-id"
               name="employee_id"
               pattern="EMP[0-9]{3}"
               title="Employee ID must be in the format EMP followed by 3 digits (e.g., EMP001)"
               required>
     </div>
     <div>
-      <label for="salary-amount">Amount:</label>
-      <input type="number" id="salary-amount" name="amount" step="0.01" required>
+      <label for="promotion-new-salary">New Salary:</label>
+      <input type="number" id="promotion-new-salary" name="new_salary" step="0.01" required>
     </div>
-    <button type="submit">Pay Salary</button>
+    <button type="submit">Give Promotion</button>
   </form>
+
 
 </main>
 

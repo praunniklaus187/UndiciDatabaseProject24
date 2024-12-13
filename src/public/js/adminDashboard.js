@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
-        const giveSalaryForm = document.getElementById('give-salary-form');
+        const giveSalaryForm = document.getElementById('give-promotion-form');
 
         // Submit Give Salary Form
         giveSalaryForm.addEventListener('submit', async (e) => {
@@ -126,17 +126,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const salaryData = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('/api/admin/give-salary', {
+                const response = await fetch('/api/admin/give-promotion', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(salaryData),
                 });
 
                 const result = await response.json();
-                alert(result.message || 'Salary disbursed successfully!');
+                alert(result.message || 'Promotion applied successfully!');
                 if (response.ok) giveSalaryForm.reset();
             } catch (error) {
-                console.error('Error disbursing salary:', error);
+                console.error('Error applyingpromotion:', error);
                 alert('Failed to disburse salary. Please try again.');
             }
         });
