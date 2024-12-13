@@ -2,14 +2,12 @@ DROP DATABASE IF EXISTS my_database;
 CREATE DATABASE my_database;
 USE my_database;
 
--- POSTAL_CODE table (no change)
 CREATE TABLE POSTAL_CODE (
                              POSTAL_CODE VARCHAR(10) PRIMARY KEY,
                              CITY VARCHAR(100),
                              COUNTRY VARCHAR(100)
 );
 
--- ADDRESS table with AUTO_INCREMENT
 CREATE TABLE ADDRESS (
                          ADDRESS_ID INT PRIMARY KEY AUTO_INCREMENT,
                          STREET_NAME VARCHAR(100),
@@ -18,14 +16,12 @@ CREATE TABLE ADDRESS (
                          FOREIGN KEY (POSTAL_CODE) REFERENCES POSTAL_CODE(POSTAL_CODE)
 );
 
--- BRANCH table with AUTO_INCREMENT
 CREATE TABLE BRANCH (
                         BRANCH_ID INT PRIMARY KEY AUTO_INCREMENT,
                         ADDRESS_ID INT,
                         FOREIGN KEY (ADDRESS_ID) REFERENCES ADDRESS(ADDRESS_ID)
 );
 
--- CUSTOMER table (No AUTO_INCREMENT here; we will use trigger to generate ID)
 CREATE TABLE CUSTOMER (
                           CUSTOMER_ID VARCHAR(50) PRIMARY KEY,
                           NAME VARCHAR(255),
@@ -51,7 +47,6 @@ BEGIN
 END//
 DELIMITER ;
 
--- EMPLOYEE table (No AUTO_INCREMENT; we will use trigger for ID)
 CREATE TABLE EMPLOYEE (
                           EMPLOYEE_ID VARCHAR(50) PRIMARY KEY,
                           NAME VARCHAR(255),
@@ -81,7 +76,6 @@ BEGIN
 END//
 DELIMITER ;
 
--- PRODUCT table with AUTO_INCREMENT
 CREATE TABLE PRODUCT (
                          PRODUCT_ID INT PRIMARY KEY AUTO_INCREMENT,
                          NAME VARCHAR(100),
@@ -89,21 +83,20 @@ CREATE TABLE PRODUCT (
                          PRICE DECIMAL(10,2)
 );
 
--- INGREDIENT table with AUTO_INCREMENT
 CREATE TABLE INGREDIENT (
                             INGREDIENT_ID INT PRIMARY KEY AUTO_INCREMENT,
                             NAME VARCHAR(100),
                             COST DECIMAL(10,2)
 );
 
-    CREATE TABLE PRODUCT_INGREDIENT (
-                                        PRODUCT_ID INT,
-                                        INGREDIENT_ID INT,
-                                        QUANTITY_REQUIRED DECIMAL(10,2),
-                                        PRIMARY KEY (PRODUCT_ID, INGREDIENT_ID),
-                                        FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID),
-                                        FOREIGN KEY (INGREDIENT_ID) REFERENCES INGREDIENT(INGREDIENT_ID)
-    );
+CREATE TABLE PRODUCT_INGREDIENT (
+                                    PRODUCT_ID INT,
+                                    INGREDIENT_ID INT,
+                                    QUANTITY_REQUIRED DECIMAL(10,2),
+                                    PRIMARY KEY (PRODUCT_ID, INGREDIENT_ID),
+                                    FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID),
+                                    FOREIGN KEY (INGREDIENT_ID) REFERENCES INGREDIENT(INGREDIENT_ID)
+);
 
 CREATE TABLE STORAGE (
                          BRANCH_ID INT,
@@ -143,15 +136,14 @@ CREATE TABLE ORDER_ITEM_PRICE (
                                   FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID)
 );
 
--- Insert sample data
 
 INSERT INTO POSTAL_CODE (POSTAL_CODE, CITY, COUNTRY) VALUES
-                                                         ('10001', 'New York', 'USA'),
-                                                         ('SW1A 1AA', 'London', 'UK');
+                                                         ('9000', 'St. Gallen', 'Schweiz'),
+                                                         ('94032', 'Passau', 'Deutschland');
 
 INSERT INTO ADDRESS (STREET_NAME, HOUSE_NUMBER, POSTAL_CODE) VALUES
-                                                                 ('Broadway', '123', '10001'),
-                                                                 ('Downing Street', '10', 'SW1A 1AA');
+                                                                 ('Guisanstrasse', '20', '9000'),
+                                                                 ('Innstraße', '41', '94032');
 
 INSERT INTO BRANCH (ADDRESS_ID) VALUES
                                     (1),
@@ -159,14 +151,13 @@ INSERT INTO BRANCH (ADDRESS_ID) VALUES
 
 -- Insert customers without specifying CUSTOMER_ID, trigger will handle it
 INSERT INTO CUSTOMER (NAME, ADDRESS_ID) VALUES
-                                            ('John Doe', 1),
-                                            ('Jane Smith', 2);
+                                            ('Thomas Bieger', 1),
+                                            ('Walter von der Vogelweide', 2);
 
 -- Insert employees without specifying EMPLOYEE_ID, trigger will handle it
-
 INSERT INTO EMPLOYEE (NAME, BRANCH_ID, SALARY, ADDRESS_ID, PASSWORD, ROLE) VALUES
-                                                               ('Alice Johnson', 1, 50000.00, 1, 'secret123', 'admin' ),
-                                                               ('Bob Williams', 2, 55000.00, 2, 'secret123', 'employee');
+                                                                               ('Samuel Widmer', 1, 140000.00, 1, 'secret123', 'admin' ),
+                                                                               ('Niklaus von Praun', 2, 55000.00, 2, 'pass456', 'employee');
 
 INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE) VALUES
                                                    ('Cheese Pizza', 'Classic cheese pizza', 10.99),
@@ -196,6 +187,7 @@ INSERT INTO INGREDIENT (NAME, COST) VALUES
                                         ('Buffalo Chicken', 3.50);
 
 
+-- Quantity is measured in kg or liters
 INSERT INTO PRODUCT_INGREDIENT (PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED) VALUES
                                                                                   (1, 1, 0.30),  -- Cheese Pizza requires 0.30 units of Cheese
                                                                                   (1, 3, 0.20),  -- Cheese Pizza requires 0.20 units of Tomato Sauce
@@ -250,6 +242,3 @@ INSERT INTO ORDER_ITEM (ORDER_ID, PRODUCT_ID, QUANTITY) VALUES
 INSERT INTO ORDER_ITEM_PRICE (ORDER_ID, PRODUCT_ID, PRICE) VALUES
                                                                (1, 1, 10.99),
                                                                (2, 2, 12.99);
-
-
-
