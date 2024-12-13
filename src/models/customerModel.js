@@ -28,10 +28,12 @@ module.exports = {
 
     async getNextCustomerId() {
         const query = `
-      SELECT IFNULL(MAX(CAST(SUBSTRING(CUSTOMER_ID, 2) AS UNSIGNED)), 0) + 1 AS NEXT_ID
-      FROM CUSTOMER
-    `;
+            SELECT COALESCE(MAX(CAST(SUBSTRING(CUSTOMER_ID, 5) AS UNSIGNED)), 0) + 1 AS NEXT_ID
+            FROM CUSTOMER
+            WHERE CUSTOMER_ID LIKE 'CUST%'
+        `;
         const [results] = await db.query(query);
-        return `C${String(results[0].NEXT_ID).padStart(4, '0')}`;
+        const nextId = results[0].NEXT_ID;
+        return `CUST${String(nextId).padStart(3, '0')}`;
     },
 };
