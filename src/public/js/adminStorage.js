@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (data.length > 0) {
                 storageContainer.innerHTML = data.map(item => `
                     <tr>
+                        <td>${item.BRANCH_ID}</td>
                         <td>${item.INGREDIENT_ID}</td>
                         <td>${item.INGREDIENT_NAME}</td>
                         <td>${item.QUANTITY}</td>
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `).join('');
                 attachUpdateEventListeners();
             } else {
-                storageContainer.innerHTML = '<tr><td colspan="5">No storage data available.</td></tr>';
+                storageContainer.innerHTML = '<tr><td colspan="6">No storage data available.</td></tr>';
             }
         } catch (error) {
             console.error('Error loading storage data:', error);
@@ -76,17 +77,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateButtons.forEach(button => {
             button.addEventListener('click', async () => {
                 const branchId = button.dataset.branchId;
-                console.log('branchId:', branchId); // Debugging log for branchId
-
                 const ingredientId = button.dataset.ingredientId;
-                console.log('ingredientId:', ingredientId); // Debugging log for ingredientId
 
                 const quantityInput = document.querySelector(`input[data-branch-id="${branchId}"][data-ingredient-id="${ingredientId}"]`);
-                console.log('quantityInput element:', quantityInput); // Debugging log for the input element
-
                 const adjustment = parseFloat(quantityInput.value);
-                console.log('adjustment:', adjustment); // Debugging log for adjustment value
-
 
                 if (isNaN(adjustment)) {
                     alert('Please enter a valid number for quantity adjustment.');
@@ -104,17 +98,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                         })
                     });
 
-                    condole.log(response);
+                    if (!response.ok) {
+                        throw new Error('Failed to update storage.');
+                    }
 
                     alert('Storage updated successfully!');
                     loadStorage(branchSelect.value); // Reload the storage data after update
                 } catch (error) {
-                    loadStorage(branchSelect.value);
+                    console.error('Error updating storage:', error);
+                    alert('Failed to update storage.');
                 }
             });
         });
     }
-
 
     // Handle filter form submission
     filterForm.addEventListener('submit', e => {
