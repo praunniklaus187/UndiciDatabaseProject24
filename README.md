@@ -26,7 +26,7 @@ src/
 │   ├── css/           # Enthält die CSS-Stylesheets
 │   │   ├── adminDashboard.css  # Stylesheet für das Admin-Dashboard
 │   │   └── global.css          # Globale CSS-Styles
-│   ├── js/            # Enthält clientseitige JavaScript-Dateien
+│   └── js/            # Enthält clientseitige JavaScript-Dateien
 │       ├── adminDashboard.js   # Admin-Dashboard-Funktionen
 │       ├── adminStorage.js     # Funktionen für die Lagerverwaltung
 │       ├── dashboard.js        # Allgemeine Dashboard-Logik
