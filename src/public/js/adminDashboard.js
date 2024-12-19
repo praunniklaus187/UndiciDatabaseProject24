@@ -5,7 +5,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ingredientsContainer = document.getElementById('ingredients-container');
     const addIngredientButton = document.getElementById('add-ingredient-button');
     const giveSalaryForm = document.getElementById('give-promotion-form');
+    await loadTopOrderedProducts()
 
+    async function loadTopOrderedProducts() {
+        try {
+            const response = await fetch('/api/admin/top-ordered-products');
+            const data = await response.json();
+            const tableBody = document.querySelector('#topOrderedProductsTable tbody');
+            tableBody.innerHTML = '';
+            data.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${product.PRODUCT_ID}</td>
+                <td>${product.NAME}</td>
+                <td>${product.TOTAL_QUANTITY}</td>
+            `;
+                tableBody.appendChild(row);
+            });
+        } catch (err) {
+            console.error('Error loading top ordered products:', err);
+        }
+    }
     // Fetch Ingredients for Menu Item
     async function fetchIngredients() {
         const response = await fetch('/api/admin/get-ingredients');

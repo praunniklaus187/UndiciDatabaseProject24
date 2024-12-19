@@ -73,5 +73,14 @@ module.exports = {
             console.error('Error applying promotion:', error);
             res.status(500).send('Error applying promotion.');
         }
+    },
+    async getTopOrderedProducts(req, res) {
+    try {
+        const products = await adminModel.getTopOrderedProducts();
+        res.json(products);
+    } catch (error) {
+        console.error('Error in getTopOrderedProducts:', error.message);
+        res.status(500).json({ error: 'Failed to fetch top ordered products.' });
     }
+}
 };

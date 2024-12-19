@@ -14,6 +14,8 @@ router.post('/api/admin/add-branch', adminController.addBranch);
 router.post('/api/admin/add-menu-item', adminController.addMenuItem);
 router.get('/api/admin/get-ingredients', adminController.getIngredients);
 router.post('/api/admin/give-promotion', adminController.givePromotion);
+router.get('/api/admin/top-ordered-products', adminController.getTopOrderedProducts);
+
 
 
 module.exports = router;
