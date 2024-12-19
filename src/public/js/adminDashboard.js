@@ -5,21 +5,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ingredientsContainer = document.getElementById('ingredients-container');
     const addIngredientButton = document.getElementById('add-ingredient-button');
     const giveSalaryForm = document.getElementById('give-promotion-form');
-    await loadTopOrderedProducts()
+    const filterTopProductsBtn = document.getElementById('filter-top-products-btn');
+    const topProductsCountInput = document.getElementById('top-products-count');
 
-    async function loadTopOrderedProducts() {
+    filterTopProductsBtn.addEventListener('click', async () => {
+        const count = parseInt(topProductsCountInput.value, 10);
+
+        if (!count || count < 1) {
+            alert('Please enter a valid number greater than 0.');
+            return;
+        }
+
+        await loadTopOrderedProducts(count);
+    });
+
+    async function loadTopOrderedProducts(count) {
         try {
-            const response = await fetch('/api/admin/top-ordered-products');
+            const response = await fetch(`/api/admin/top-ordered-products?count=${count}`);
             const data = await response.json();
+
             const tableBody = document.querySelector('#topOrderedProductsTable tbody');
-            tableBody.innerHTML = '';
+            tableBody.innerHTML = ''; // Clear previous data
+
             data.forEach(product => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                <td>${product.PRODUCT_ID}</td>
-                <td>${product.NAME}</td>
-                <td>${product.TOTAL_QUANTITY}</td>
-            `;
+          <td>${product.PRODUCT_ID}</td>
+          <td>${product.NAME}</td>
+          <td>${product.TOTAL_QUANTITY}</td>
+        `;
                 tableBody.appendChild(row);
             });
         } catch (err) {

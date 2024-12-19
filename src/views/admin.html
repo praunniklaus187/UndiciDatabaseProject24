@@ -143,7 +143,16 @@
 
   <section>
     <h2>Performance Insights</h2>
-    <h3>Top 5 Most Ordered Products</h3>
+    <h3>Top X Most Ordered Products</h3>
+
+    <!-- Filter Input -->
+    <div>
+      <label for="top-products-count">Number of Products:</label>
+      <input type="number" id="top-products-count" min="1" placeholder="Enter a number to filter" />
+      <button id="filter-top-products-btn">Apply Filter</button>
+    </div>
+
+    <!-- Table for Display -->
     <table id="topOrderedProductsTable">
       <thead>
       <tr>
@@ -156,6 +165,7 @@
       </tbody>
     </table>
   </section>
+
 
 </main>
 

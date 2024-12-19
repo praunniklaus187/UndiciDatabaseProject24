@@ -75,12 +75,14 @@ module.exports = {
         }
     },
     async getTopOrderedProducts(req, res) {
-    try {
-        const products = await adminModel.getTopOrderedProducts();
-        res.json(products);
-    } catch (error) {
-        console.error('Error in getTopOrderedProducts:', error.message);
-        res.status(500).json({ error: 'Failed to fetch top ordered products.' });
-    }
-}
+        const count = parseInt(req.query.count, 10) || 5; // Default to 5 if not provided
+
+        try {
+            const products = await adminModel.getTopOrderedProducts(count);
+            res.json(products);
+        } catch (err) {
+            console.error('Error in getTopOrderedProducts:', err);
+            res.status(500).json({ error: 'Failed to fetch top ordered products.' });
+        }
+    },
 };
