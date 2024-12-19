@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/employee/home';
     });
 
-    // Initialize
     loadBranches();
     fetchStorageData();
 });

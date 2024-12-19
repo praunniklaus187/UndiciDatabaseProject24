@@ -5,7 +5,7 @@ module.exports = {
     async getProducts(req, res) {
         const query = 'SELECT PRODUCT_ID, NAME, DESCRIPTION, PRICE FROM PRODUCT';
         try {
-            const [results] = await db.query(query); // Use promise-based query
+            const [results] = await db.query(query);
             res.json(results);
         } catch (err) {
             console.error('Error fetching products:', err);
@@ -16,7 +16,7 @@ module.exports = {
     // Fetch data from any table dynamically
     async getTableData(req, res) {
         const tableName = req.params.tableName;
-        const query = `SELECT * FROM ??`; // Use placeholder to prevent SQL injection
+        const query = `SELECT * FROM ??`;
         try {
             const [results] = await db.query(query, [tableName]);
             res.json(results);

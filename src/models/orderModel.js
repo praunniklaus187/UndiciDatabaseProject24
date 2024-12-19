@@ -7,7 +7,7 @@ module.exports = {
             VALUES ('In Progress', ?, ?, NOW())
         `;
         const [result] = await db.query(query, [customer_id, branch_id]);
-        return result.insertId; // Return the order ID
+        return result.insertId;
     },
 
     async addOrderItems(order_id, products) {

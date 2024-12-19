@@ -1,14 +1,13 @@
 const storageModel = require('../models/storageModel');
-const path = require('path'); // Import the path module
+const path = require('path');
 
 module.exports = {
-    // Fetch all storage data and return as JSON
     async getStorageData(req, res) {
     try {
-        const branchId = req.query.branch || null; // Get branch ID from query params
+        const branchId = req.query.branch || null;
         const storageData = branchId
-            ? await storageModel.getStorageDetails(branchId) // Filtered data
-            : await storageModel.getAllStorage(); // All data
+            ? await storageModel.getStorageDetails(branchId)
+            : await storageModel.getAllStorage();
 
         if (!storageData || storageData.length === 0) {
             return res.status(200).json({ message: 'No storage data available.', data: [] });
@@ -36,10 +35,10 @@ module.exports = {
     // Fetch storage data filtered by branch
     async getFilteredStorage(req, res) {
         try {
-            const branchId = req.query.branch || null; // Retrieve branch query param
+            const branchId = req.query.branch || null;
             const storageData = branchId
-                ? await storageModel.getStorageDetails(branchId) // Correct function call
-                : await storageModel.getAllStorage(); // All data
+                ? await storageModel.getStorageDetails(branchId)
+                : await storageModel.getAllStorage();
 
             if (!storageData || storageData.length === 0) {
                 return res.status(200).json({ message: 'No storage data available.', data: [] });
@@ -66,7 +65,6 @@ module.exports = {
         }
 
         try {
-            // Fetch the current quantity from the database
             const currentData = await storageModel.getStorageDetails(branch_id);
             const currentQuantity = currentData.find(item => item.INGREDIENT_ID === parseInt(ingredient_id))?.QUANTITY;
 

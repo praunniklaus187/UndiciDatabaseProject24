@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const responseMessage = document.getElementById('response-message');
 
     signupForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent default form submission
-        responseMessage.innerHTML = ''; // Clear previous messages
+        event.preventDefault();
+        responseMessage.innerHTML = '';
 
         // Gather form data
         const formData = {

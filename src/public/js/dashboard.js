@@ -1,13 +1,11 @@
-// Ensure DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Dashboard JS loaded');
 
-    // Handle "Complete Order" buttons
     const completeOrderButtons = document.querySelectorAll('.complete-order-btn');
     completeOrderButtons.forEach(button => {
         button.addEventListener('click', async (event) => {
-            event.preventDefault(); // Prevent form submission
-            const orderId = event.target.dataset.orderId; // Get the order ID from the button's data attribute
+            event.preventDefault();
+            const orderId = event.target.dataset.orderId;
 
             try {
                 const response = await fetch('/employee/handle-order', {
@@ -18,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     alert('Order completed successfully!');
-                    // Reload the page to refresh the orders list
                     location.reload();
                 } else {
                     const errorMessage = await response.text();
@@ -31,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Example: Fetch storage data dynamically (if needed)
     const storageButton = document.getElementById('storage-button');
     if (storageButton) {
         storageButton.addEventListener('click', async () => {
@@ -40,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     const storageData = await response.json();
                     console.log('Storage data:', storageData);
-                    // Update the DOM to display storage data (implement your UI logic)
                 } else {
                     alert('Failed to fetch storage data.');
                 }

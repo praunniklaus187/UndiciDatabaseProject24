@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const { data } = await response.json();
 
             if (data && data.length > 0) {
-                branchSelect.innerHTML = '<option value="">All Branches</option>'; // Default option
+                branchSelect.innerHTML = '<option value="">All Branches</option>';
                 data.forEach(branch => {
                     const option = document.createElement('option');
                     option.value = branch.BRANCH_ID;
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
 
                     alert('Storage updated successfully!');
-                    loadStorage(branchSelect.value); // Reload the storage data after update
+                    loadStorage(branchSelect.value);
                 } catch (error) {
                     console.error('Error updating storage:', error);
                     alert('Failed to update storage.');
@@ -119,7 +119,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadStorage(branchId);
     });
 
-    // Initial load
     await loadBranches();
     await loadStorage();
 });

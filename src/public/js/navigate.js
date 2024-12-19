@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form');
 
     form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent the default form submission behavior
+        event.preventDefault();
         console.log("Form submission intercepted!");
 
         const employeeId = document.getElementById('employee_id').value.trim();
@@ -26,11 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Response:", response);
 
             if (response.redirected) {
-                // If the server issues a redirect, follow it
                 console.log("Redirecting to:", response.url);
                 window.location.href = response.url;
             } else if (response.ok) {
-                // Handle non-redirect successful responses (if any)
                 console.log("Response OK:", await response.text());
             } else if (response.status === 401) {
                 alert('Invalid Employee ID or Password.');
@@ -44,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Home button navigation logic
 function navigateToHome() {
     window.location.href = '/';
 }

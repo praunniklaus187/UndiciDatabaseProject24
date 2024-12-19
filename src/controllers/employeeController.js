@@ -40,7 +40,7 @@ module.exports = {
         try {
             const orders = await employeeModel.getUnfinishedOrders();
             console.log("Got unfinished orders:", orders);
-            res.json(orders); // Return JSON for the frontend
+            res.json(orders);
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
             res.status(500).send('Error fetching dashboard data.');

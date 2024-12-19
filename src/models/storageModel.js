@@ -34,7 +34,7 @@ module.exports = {
         return results;
     },
 
-    // Fetch storage data filtered by branch ID (Similar to getStorageDetails)
+    // Fetch storage data filtered by branch ID
     async getStorageData(req, res) {
         try {
             const storageData = await this.getStorageDetails(); // Use correct method reference

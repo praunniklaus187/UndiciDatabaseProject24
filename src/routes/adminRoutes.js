@@ -4,7 +4,6 @@ const adminController = require('../controllers/adminController'); // Import the
 
 const router = express.Router();
 
-// Serve the admin page
 router.get('/employee/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '../views/admin.html'));
 });

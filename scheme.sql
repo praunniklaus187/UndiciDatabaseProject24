@@ -149,12 +149,10 @@ INSERT INTO BRANCH (ADDRESS_ID) VALUES
                                     (1),
                                     (2);
 
--- Insert customers without specifying CUSTOMER_ID, trigger will handle it
 INSERT INTO CUSTOMER (NAME, ADDRESS_ID) VALUES
                                             ('Thomas Bieger', 1),
                                             ('Walter von der Vogelweide', 2);
 
--- Insert employees without specifying EMPLOYEE_ID, trigger will handle it
 INSERT INTO EMPLOYEE (NAME, BRANCH_ID, SALARY, ADDRESS_ID, PASSWORD, ROLE) VALUES
                                                                                ('Samuel Widmer', 1, 140000.00, 1, 'secret123', 'admin' ),
                                                                                ('Niklaus von Praun', 2, 55000.00, 2, 'pass456', 'employee');
@@ -189,46 +187,46 @@ INSERT INTO INGREDIENT (NAME, COST) VALUES
 
 -- Quantity is measured in kg or liters
 INSERT INTO PRODUCT_INGREDIENT (PRODUCT_ID, INGREDIENT_ID, QUANTITY_REQUIRED) VALUES
-                                                                                  (1, 1, 0.30),  -- Cheese Pizza requires 0.30 units of Cheese
-                                                                                  (1, 3, 0.20),  -- Cheese Pizza requires 0.20 units of Tomato Sauce
-                                                                                  (2, 1, 0.30),  -- Pepperoni Pizza requires 0.30 units of Cheese
-                                                                                  (2, 2, 0.20),  -- Pepperoni Pizza requires 0.20 units of Pepperoni
-                                                                                  (2, 3, 0.20),  -- Pepperoni Pizza requires 0.20 units of Tomato Sauce
-                                                                                  (3, 1, 0.30),  -- Veggie Pizza requires 0.30 units of Cheese
-                                                                                  (3, 4, 0.50),  -- Veggie Pizza requires 0.50 units of Vegetables
-                                                                                  (3, 3, 0.20),  -- Veggie Pizza requires 0.20 units of Tomato Sauce
-                                                                                  (4, 1, 0.30),  -- BBQ Chicken Pizza requires 0.30 units of Cheese
-                                                                                  (4, 5, 0.40),  -- BBQ Chicken Pizza requires 0.40 units of BBQ Chicken
-                                                                                  (5, 1, 0.30),  -- Margherita Pizza requires 0.30 units of Cheese
-                                                                                  (5, 6, 0.10),  -- Margherita Pizza requires 0.10 units of Basil
-                                                                                  (6, 1, 0.30),  -- Hawaiian Pizza requires 0.30 units of Cheese
-                                                                                  (6, 7, 0.20),  -- Hawaiian Pizza requires 0.20 units of Ham
-                                                                                  (6, 8, 0.20),  -- Hawaiian Pizza requires 0.20 units of Pineapple
-                                                                                  (7, 1, 0.30),  -- Meat Lover's Pizza requires 0.30 units of Cheese
-                                                                                  (7, 9, 0.50),  -- Meat Lover's Pizza requires 0.50 units of Assorted Meats
-                                                                                  (8, 1, 0.30),  -- Gluten-Free Cheese Pizza requires 0.30 units of Cheese
-                                                                                  (9, 10, 0.30), -- White Pizza requires 0.30 units of Ricotta
-                                                                                  (9, 11, 0.30), -- White Pizza requires 0.30 units of Mozzarella
-                                                                                  (10, 1, 0.30), -- Buffalo Chicken Pizza requires 0.30 units of Cheese
-                                                                                  (10, 12, 0.40); -- Buffalo Chicken Pizza requires 0.40 units of Buffalo Chicken
+                                                                                  (1, 1, 0.30),
+                                                                                  (1, 3, 0.20),
+                                                                                  (2, 1, 0.30),
+                                                                                  (2, 2, 0.20),
+                                                                                  (2, 3, 0.20),
+                                                                                  (3, 1, 0.30),
+                                                                                  (3, 4, 0.50),
+                                                                                  (3, 3, 0.20),
+                                                                                  (4, 1, 0.30),
+                                                                                  (4, 5, 0.40),
+                                                                                  (5, 1, 0.30),
+                                                                                  (5, 6, 0.10),
+                                                                                  (6, 1, 0.30),
+                                                                                  (6, 7, 0.20),
+                                                                                  (6, 8, 0.20),
+                                                                                  (7, 1, 0.30),
+                                                                                  (7, 9, 0.50),
+                                                                                  (8, 1, 0.30),
+                                                                                  (9, 10, 0.30),
+                                                                                  (9, 11, 0.30),
+                                                                                  (10, 1, 0.30),
+                                                                                  (10, 12, 0.40);
 
 
 INSERT INTO STORAGE (BRANCH_ID, INGREDIENT_ID, QUANTITY) VALUES
-                                                             (1, 1, 200.00), -- Branch 1 has 200 units of Cheese
-                                                             (1, 2, 100.00), -- Branch 1 has 100 units of Pepperoni
-                                                             (1, 3, 150.00), -- Branch 1 has 150 units of Tomato Sauce
-                                                             (1, 4, 80.00),  -- Branch 1 has 80 units of Vegetables
-                                                             (1, 5, 50.00),  -- Branch 1 has 50 units of BBQ Chicken
-                                                             (1, 6, 40.00),  -- Branch 1 has 40 units of Basil
-                                                             (2, 1, 180.00), -- Branch 2 has 180 units of Cheese
-                                                             (2, 2, 90.00),  -- Branch 2 has 90 units of Pepperoni
-                                                             (2, 7, 70.00),  -- Branch 2 has 70 units of Ham
-                                                             (2, 8, 60.00),  -- Branch 2 has 60 units of Pineapple
-                                                             (2, 9, 40.00),  -- Branch 2 has 40 units of Assorted Meats
-                                                             (2, 10, 50.00), -- Branch 2 has 50 units of Ricotta
-                                                             (2, 11, 100.00),-- Branch 2 has 100 units of Mozzarella
-                                                             (1, 12, 60.00), -- Branch 1 has 60 units of Buffalo Chicken
-                                                             (2, 12, 70.00); -- Branch 2 has 70 units of Buffalo Chicken
+                                                             (1, 1, 200.00),
+                                                             (1, 2, 100.00),
+                                                             (1, 3, 150.00),
+                                                             (1, 4, 80.00),
+                                                             (1, 5, 50.00),
+                                                             (1, 6, 40.00),
+                                                             (2, 1, 180.00),
+                                                             (2, 2, 90.00),
+                                                             (2, 7, 70.00),
+                                                             (2, 8, 60.00),
+                                                             (2, 9, 40.00),
+                                                             (2, 10, 50.00),
+                                                             (2, 11, 100.00),
+                                                             (1, 12, 60.00),
+                                                             (2, 12, 70.00);
 
 
 INSERT INTO `ORDER` (STATUS, CUSTOMER_ID, BRANCH_ID, ORDER_DATE) VALUES

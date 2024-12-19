@@ -1,5 +1,3 @@
-// src/public/js/adminDashboard.js
-
 document.addEventListener('DOMContentLoaded', async () => {
     const addEmployeeForm = document.getElementById('add-employee-form');
     const addBranchForm = document.getElementById('add-branch-form');

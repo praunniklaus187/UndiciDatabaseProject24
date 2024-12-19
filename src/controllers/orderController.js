@@ -1,5 +1,5 @@
 const orderModel = require('../models/orderModel');
-const db = require('../db'); // Correctly import the database connection
+const db = require('../db');
 
 
 module.exports = {
