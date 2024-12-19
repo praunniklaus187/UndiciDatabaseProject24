@@ -7,7 +7,7 @@
 
 
 ## **Verzeichnisstruktur**
-
+```
 src/               
 ├── controllers/   # Enthält die Controller-Logik für verschiedene Funktionen
 │   ├── adminController.js      # Steuert die Funktionen für Administratoren
@@ -57,7 +57,6 @@ src/
 
 ```
 
----
 
 ## **Installation**
 
