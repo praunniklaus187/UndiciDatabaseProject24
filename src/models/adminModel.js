@@ -137,20 +137,34 @@ module.exports = {
             throw new Error(`Failed to update employee salary: ${error.message}`);
         }
     },
-    async getTopOrderedProducts(count) {
+    async getTopOrderedProducts(count, branchId) {
         try {
-            const query = `
+            let query = `
         SELECT P.PRODUCT_ID, P.NAME, SUM(OI.QUANTITY) AS TOTAL_QUANTITY
         FROM PRODUCT P
         JOIN ORDER_ITEM OI ON P.PRODUCT_ID = OI.PRODUCT_ID
+        JOIN \`ORDER\` O ON OI.ORDER_ID = O.ORDER_ID
+      `;
+            const params = [];
+
+            if (branchId) {
+                query += ` WHERE O.BRANCH_ID = ? `;
+                params.push(branchId);
+            }
+
+            query += `
         GROUP BY P.PRODUCT_ID, P.NAME
         ORDER BY TOTAL_QUANTITY DESC
         LIMIT ?
       `;
-            const [results] = await db.query(query, [count]);
+            params.push(count);
+
+            const [results] = await db.query(query, params);
             return results;
         } catch (err) {
             console.error('Error in fetchTopOrderedProducts:', err);
             throw new Error('Failed to fetch top ordered products.');
         }
-    }}
+    },
+
+}

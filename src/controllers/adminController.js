@@ -76,9 +76,10 @@ module.exports = {
     },
     async getTopOrderedProducts(req, res) {
         const count = parseInt(req.query.count, 10) || 5; // Default to 5 if not provided
+        const branchId = req.query.branch_id ? parseInt(req.query.branch_id, 10) : null; // Optional filter
 
         try {
-            const products = await adminModel.getTopOrderedProducts(count);
+            const products = await adminModel.getTopOrderedProducts(count, branchId);
             res.json(products);
         } catch (err) {
             console.error('Error in getTopOrderedProducts:', err);
