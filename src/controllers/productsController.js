@@ -5,7 +5,7 @@ module.exports = {
     async getProducts(req, res) {
         const query = 'SELECT PRODUCT_ID, NAME, DESCRIPTION, PRICE FROM PRODUCT';
         try {
-            const [results] = await db.query(query); // Use promise-based query
+            const [results] = await db.query(query);
             res.json(results);
         } catch (err) {
             console.error('Error fetching products:', err);
