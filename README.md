@@ -103,3 +103,8 @@ Das Projekt **Datenbanken Undici** implementiert eine Datenbank-gestützte Anwen
 - **Views:** Beinhalted jegliche HTML files zur Frontend Ansicht
 
 ---
+
+### **Employee Login:**
+- **Admin:** EMPLOYEE_ID: EMP001; Passwort: secret123
+- **Employee ohne Admin Status:** Employee_ID: EMP002; Passwort: pass456
+---
