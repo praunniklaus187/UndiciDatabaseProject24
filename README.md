@@ -108,3 +108,6 @@ Das Projekt **Datenbanken Undici** implementiert eine Datenbank-gestützte Anwen
 - **Admin:** EMPLOYEE_ID: EMP001; Passwort: secret123
 - **Employee ohne Admin Status:** Employee_ID: EMP002; Passwort: pass456
 ---
+
+### **Aufgabenverteilung:**
+- Unser Projekt war das Ergebnis einer engen Zusammenarbeit. Wir haben regelmäßig gemeinsam am Code gearbeitet über ein Github Repository und uns gegenseitig unterstützt. Der Report wurde in einem geteilten Overleaf-Projekt erstellt, wobei jeder an verschiedenen Abschnitten mitgewirkt und Feedback gegeben hat. So konnten wir effizient und abgestimmt arbeiten.
